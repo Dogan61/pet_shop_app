@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pet_shop_app/core/constants/login_constants.dart';
 import 'package:pet_shop_app/core/validation/login_validator.dart';
 import 'package:pet_shop_app/feature/login/controller/login_controller.dart';
+import 'package:pet_shop_app/l10n/app_localizations.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -29,211 +30,223 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(),
-      body: SingleChildScrollView(
-        child: Form(
-          key: _controller.formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 24),
+        appBar: AppBar(),
+        body: SingleChildScrollView(
+          child: Form(
+            key: _controller.formKey,
+            child: Column(
+              children: [
+                const SizedBox(height: 24),
 
-              /// Logo
-              Center(
-                child: Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.grey.shade300),
-                    image: DecorationImage(
-                      image: NetworkImage(LoginConstants.loginImageHeader),
-                      fit: BoxFit.cover,
+                /// Logo
+                Center(
+                  child: Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.grey.shade300),
+                      image: const DecorationImage(
+                        image: NetworkImage(LoginConstants.loginImageHeader),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 24),
+                const SizedBox(height: 24),
 
-              /// Welcome text
-              CustomWelcomeText(
-                welcomeText: LoginConstants.welcomeText,
-                theme: theme,
-              ),
-
-              const SizedBox(height: 8),
-
-              Text(
-                LoginConstants.continueText,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w400,
+                /// Welcome text
+                CustomWelcomeText(
+                  welcomeText: l10n.welcome,
+                  theme: theme,
                 ),
-              ),
 
-              const SizedBox(height: 32),
+                const SizedBox(height: 8),
 
-              /// Form
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Column(
-                  children: [
-                    CustomLoginTextField(
-                      controller: _controller.emailController,
-                      customHintText: LoginConstants.emailText,
-                      customIcon: Icons.email,
-                      keyboardType: TextInputType.emailAddress,
-                      validator: LoginValidator.validateEmail,
-                    ),
-                    const SizedBox(height: 12),
-                    CustomLoginTextField(
-                      controller: _controller.passwordController,
-                      customHintText: LoginConstants.passwordText,
-                      customIcon: Icons.lock,
-                      visibilityIcon: _controller.obscurePassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      obscureText: _controller.obscurePassword,
-                      onVisibilityToggle: () {
-                        setState(() {
-                          _controller.togglePasswordVisibility();
-                        });
-                      },
-                      validator: LoginValidator.validatePassword,
-                    ),
+                Text(
+                  l10n.signInToYourAccountToContinue,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
 
-                    /// Forgot password
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: Text(
-                          'Forgot Password?',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
+                const SizedBox(height: 32),
+
+                /// Form
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Column(
+                    children: [
+                      CustomLoginTextField(
+                        controller: _controller.emailController,
+                        customHintText: l10n.enterYourEmail,
+                        customIcon: Icons.email,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) =>
+                            LoginValidator.validateEmail(value, context),
+                      ),
+                      const SizedBox(height: 12),
+                      CustomLoginTextField(
+                        controller: _controller.passwordController,
+                        customHintText: l10n.password,
+                        customIcon: Icons.lock,
+                        visibilityIcon: _controller.obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        obscureText: _controller.obscurePassword,
+                        onVisibilityToggle: () {
+                          setState(() {
+                            _controller.togglePasswordVisibility();
+                          });
+                        },
+                        validator: (value) =>
+                            LoginValidator.validatePassword(value, context),
+                      ),
+
+                      /// Forgot password
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: Text(
+                            l10n.forgotPassword,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
-                    ),
 
-                    /// Login button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 52,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (_controller.handleLogin()) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Login successful')),
-                            );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF7BAF7B),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(28),
+                      /// Login button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (!_controller.formKey.currentState!.validate()) {
+                              return;
+                            }
+
+                            if (LoginValidator.validateLoginForm(
+                              email: _controller.email,
+                              password: _controller.password,
+                              context: context,
+                            )) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(l10n.loginSuccessful)),
+                              );
+                              // TODO: Login operation will be performed here
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF7BAF7B),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(28),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                l10n.signIn,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              const Icon(Icons.arrow_forward,
+                                  color: Colors.white),
+                            ],
                           ),
                         ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Sign In',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      /// Divider
+                      Row(
+                        children: [
+                          const Expanded(
+                            child: Divider(
+                              color: Color(0xFFD3E7D3),
+                              thickness: 1,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(
+                              l10n.orContinueWith,
+                              style: const TextStyle(
+                                color: Color(0xFF7BAF7B),
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
-                            SizedBox(width: 6),
-                            Icon(Icons.arrow_forward, color: Colors.white),
-                          ],
-                        ),
+                          ),
+                          const Expanded(
+                            child: Divider(
+                              color: Color(0xFFD3E7D3),
+                              thickness: 1,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
+                    ],
+                  ),
+                ),
 
-                  const SizedBox(height: 24),
-
-                  /// Divider
-                  Row(
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
                     children: [
                       Expanded(
-                        child: Divider(
-                          color: Color(0xFFD3E7D3),
-                          thickness: 1,
+                        child: SocialLoginButton(
+                          text: l10n.google,
+                          iconUrl: LoginConstants.googleIcon,
+                          onPressed: () {},
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        child: Text(
-                          LoginConstants.toContinune,
-                          style: TextStyle(
-                            color: Color(0xFF7BAF7B),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
+                      const SizedBox(width: 12),
                       Expanded(
-                        child: Divider(
-                          color: Color(0xFFD3E7D3),
-                          thickness: 1,
+                        child: SocialLoginButton(
+                          text: l10n.facebook,
+                          iconUrl: LoginConstants.facebookIcon,
+                          onPressed: () {},
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: SocialLoginButton(
-                      text: 'Google',
-                      iconUrl: LoginConstants.googleIcon,
-                      onPressed: () {},
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: SocialLoginButton(
-                      text: 'Facebook',
-                      iconUrl: LoginConstants.facebookIcon,
-                      onPressed: () {},
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(LoginConstants.isExistsText),
-                const SizedBox(width: 8),
-                TextButton(
-                  child: Text(
-                    LoginConstants.registerText,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  onPressed: () => context.go('/register'),
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(l10n.dontHaveAnAccount),
+                    const SizedBox(width: 8),
+                    TextButton(
+                      child: Text(
+                        l10n.signUp,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      onPressed: () => context.go('/register'),
+                    ),
+                  ],
+                )
               ],
-            )
-          ],
-        ),
-      ),
-    ));
+            ),
+          ),
+        ));
   }
 }
 
 class CustomWelcomeText extends StatelessWidget {
   const CustomWelcomeText({
-    super.key,
     required this.welcomeText,
     required this.theme,
+    super.key,
   });
 
   final String welcomeText;
@@ -241,14 +254,11 @@ class CustomWelcomeText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30),
-      child: Text(
-        welcomeText,
-        textAlign: TextAlign.center,
-        style: theme.textTheme.headlineSmall?.copyWith(
-          fontWeight: FontWeight.w600,
-        ),
+    return Text(
+      welcomeText,
+      textAlign: TextAlign.center,
+      style: theme.textTheme.headlineSmall?.copyWith(
+        fontWeight: FontWeight.w600,
       ),
     );
   }
@@ -256,10 +266,10 @@ class CustomWelcomeText extends StatelessWidget {
 
 class CustomLoginTextField extends StatelessWidget {
   const CustomLoginTextField({
-    super.key,
     required this.controller,
     required this.customHintText,
     required this.customIcon,
+    super.key,
     this.visibilityIcon,
     this.obscureText = false,
     this.keyboardType,
@@ -334,10 +344,10 @@ class CustomLoginTextField extends StatelessWidget {
 
 class SocialLoginButton extends StatelessWidget {
   const SocialLoginButton({
-    super.key,
     required this.text,
     required this.iconUrl,
     required this.onPressed,
+    super.key,
   });
 
   final String text;
@@ -383,4 +393,3 @@ class SocialLoginButton extends StatelessWidget {
     );
   }
 }
-

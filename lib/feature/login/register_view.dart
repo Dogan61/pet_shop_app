@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pet_shop_app/core/validation/register_validator.dart';
 import 'package:pet_shop_app/feature/login/controller/register_controller.dart';
+import 'package:pet_shop_app/l10n/app_localizations.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -27,6 +28,7 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(
@@ -53,7 +55,7 @@ class _RegisterViewState extends State<RegisterView> {
 
               /// TITLE
               Text(
-                'Create Account',
+                l10n.createAccount,
                 style: Theme.of(context)
                     .textTheme
                     .headlineSmall
@@ -64,7 +66,7 @@ class _RegisterViewState extends State<RegisterView> {
 
               /// SUBTITLE
               Text(
-                'The best for your pets',
+                l10n.theBestForYourPets,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
 
@@ -76,18 +78,20 @@ class _RegisterViewState extends State<RegisterView> {
                   Expanded(
                     child: _InputField(
                       controller: _controller.firstNameController,
-                      hint: 'First Name',
+                      hint: l10n.firstName,
                       icon: Icons.person,
-                      validator: RegisterValidator.validateFirstName,
+                      validator: (value) =>
+                          RegisterValidator.validateFirstName(value, context),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: _InputField(
                       controller: _controller.lastNameController,
-                      hint: 'Last Name',
+                      hint: l10n.lastName,
                       icon: Icons.person_outline,
-                      validator: RegisterValidator.validateLastName,
+                      validator: (value) =>
+                          RegisterValidator.validateLastName(value, context),
                     ),
                   ),
                 ],
@@ -98,10 +102,11 @@ class _RegisterViewState extends State<RegisterView> {
               /// EMAIL
               _InputField(
                 controller: _controller.emailController,
-                hint: 'example@email.com',
+                hint: l10n.exampleEmail,
                 icon: Icons.email,
                 keyboardType: TextInputType.emailAddress,
-                validator: RegisterValidator.validateEmail,
+                validator: (value) =>
+                    RegisterValidator.validateEmail(value, context),
               ),
 
               const SizedBox(height: 12),
@@ -109,7 +114,7 @@ class _RegisterViewState extends State<RegisterView> {
               /// PASSWORD
               _InputField(
                 controller: _controller.passwordController,
-                hint: 'Password',
+                hint: l10n.password,
                 icon: Icons.lock,
                 isPassword: true,
                 obscureText: _controller.obscurePassword,
@@ -118,7 +123,8 @@ class _RegisterViewState extends State<RegisterView> {
                     _controller.togglePasswordVisibility();
                   });
                 },
-                validator: RegisterValidator.validatePassword,
+                validator: (value) =>
+                    RegisterValidator.validatePassword(value, context),
               ),
 
               const SizedBox(height: 24),
@@ -129,10 +135,21 @@ class _RegisterViewState extends State<RegisterView> {
                 height: 54,
                 child: ElevatedButton(
                   onPressed: () {
-                    if (_controller.handleRegister()) {
+                    if (!_controller.formKey.currentState!.validate()) {
+                      return;
+                    }
+
+                    if (RegisterValidator.validateRegisterForm(
+                      firstName: _controller.firstName,
+                      lastName: _controller.lastName,
+                      email: _controller.email,
+                      password: _controller.password,
+                      context: context,
+                    )) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Registration successful')),
+                        SnackBar(content: Text(l10n.registrationSuccessful)),
                       );
+                      // TODO: Register operation will be performed here
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -141,9 +158,9 @@ class _RegisterViewState extends State<RegisterView> {
                       borderRadius: BorderRadius.circular(28),
                     ),
                   ),
-                  child: const Text(
-                    'Sign Up',
-                    style: TextStyle(
+                  child: Text(
+                    l10n.signUp,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: Colors.black,
@@ -156,13 +173,13 @@ class _RegisterViewState extends State<RegisterView> {
 
               /// DIVIDER
               Row(
-                children: const [
-                  Expanded(child: Divider()),
+                children: [
+                  const Expanded(child: Divider()),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    child: Text('or'),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(l10n.or),
                   ),
-                  Expanded(child: Divider()),
+                  const Expanded(child: Divider()),
                 ],
               ),
 
@@ -170,7 +187,7 @@ class _RegisterViewState extends State<RegisterView> {
 
               /// GOOGLE BUTTON
               _SocialButton(
-                text: 'Sign up with Google',
+                text: l10n.signUpWithGoogle,
                 borderColor: Colors.grey.shade300,
               ),
 
@@ -178,7 +195,7 @@ class _RegisterViewState extends State<RegisterView> {
 
               /// FACEBOOK BUTTON
               _SocialButton(
-                text: 'Sign up with Facebook',
+                text: l10n.signUpWithFacebook,
                 backgroundColor: const Color(0xFF4267B2),
                 textColor: Colors.white,
               ),
@@ -189,12 +206,12 @@ class _RegisterViewState extends State<RegisterView> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Already have an account? '),
+                  Text(l10n.alreadyHaveAnAccount),
                   GestureDetector(
                     onTap: () => context.go('/login'),
-                    child: const Text(
-                      'Sign In',
-                      style: TextStyle(
+                    child: Text(
+                      l10n.signIn,
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF6BBF59),
                       ),

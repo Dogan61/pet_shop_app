@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
+import 'package:pet_shop_app/feature/home/home_view.dart';
 import 'package:pet_shop_app/feature/login/login_view.dart';
-import 'package:pet_shop_app/feature/register/register_view.dart';
+import 'package:pet_shop_app/feature/login/register_view.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/login',
@@ -8,12 +9,12 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/login',
       name: 'login',
-      builder: (context, state) =>  LoginView(),
+      builder: (context, state) => const HomeView(),
     ),
     GoRoute(
       path: '/register',
       name: 'register',
-      builder: (context, state) =>  RegisterView(),
+      builder: (context, state) => const RegisterView(),
     ),
   ],
 );

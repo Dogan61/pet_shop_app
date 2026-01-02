@@ -1,9 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:pet_shop_app/l10n/app_localizations.dart';
+
 /// Login form validations
 class LoginValidator {
   /// Email validation
-  static String? validateEmail(String? value) {
+  static String? validateEmail(String? value, BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (value == null || value.isEmpty) {
-      return 'Email address cannot be empty';
+      return l10n?.emailCannotBeEmpty;
     }
 
     final emailRegex = RegExp(
@@ -11,20 +15,21 @@ class LoginValidator {
     );
 
     if (!emailRegex.hasMatch(value)) {
-      return 'Please enter a valid email address';
+      return l10n?.pleaseEnterValidEmail;
     }
 
     return null;
   }
 
   /// Password validation (for login - minimum 6 characters)
-  static String? validatePassword(String? value) {
+  static String? validatePassword(String? value, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (value == null || value.isEmpty) {
-      return 'Password cannot be empty';
+      return l10n.passwordCannotBeEmpty;
     }
 
     if (value.length < 6) {
-      return 'Password must be at least 6 characters';
+      return l10n.passwordMustBeAtLeast6Characters;
     }
 
     return null;
@@ -34,8 +39,9 @@ class LoginValidator {
   static bool validateLoginForm({
     required String email,
     required String password,
+    required BuildContext context,
   }) {
-    return validateEmail(email) == null && validatePassword(password) == null;
+    return validateEmail(email, context) == null &&
+        validatePassword(password, context) == null;
   }
 }
-

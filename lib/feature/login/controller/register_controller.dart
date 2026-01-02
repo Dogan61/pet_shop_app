@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pet_shop_app/core/validation/register_validator.dart';
 
 /// Business logic controller for register page
 class RegisterController {
@@ -27,29 +26,17 @@ class RegisterController {
     obscurePassword = !obscurePassword;
   }
 
-  /// Perform register operation
-  bool handleRegister() {
-    if (!formKey.currentState!.validate()) {
-      return false;
-    }
+  /// Get first name value
+  String get firstName => firstNameController.text.trim();
 
-    final firstName = firstNameController.text.trim();
-    final lastName = lastNameController.text.trim();
-    final email = emailController.text.trim();
-    final password = passwordController.text;
+  /// Get last name value
+  String get lastName => lastNameController.text.trim();
 
-    if (RegisterValidator.validateRegisterForm(
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      password: password,
-    )) {
-      // TODO: Register operation will be performed here
-      return true;
-    }
+  /// Get email value
+  String get email => emailController.text.trim();
 
-    return false;
-  }
+  /// Get password value
+  String get password => passwordController.text;
 
   /// Clean up controller
   void dispose() {
@@ -59,4 +46,3 @@ class RegisterController {
     passwordController.dispose();
   }
 }
-
