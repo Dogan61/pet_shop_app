@@ -2,9 +2,9 @@
   "@@locale": "tr",
   "appTitle": "Pet Shop Uygulaması",
   "welcome": "Hoş Geldiniz",
-  "helloAgain": "Tekrar Merhaba",
+  "helloAgain": "Tekrar Merhaba 👋 ",
   "findYourBestFriend": "Can Dostunu bul",
-  "searchByBreedOrName": "Irk veya isim ara",
+  "searchByBreedOrName": "Irk veya isim ara...",
   "all": "Hepsi",
   "dogs": "Köpekler",
   "cats": "Kediler",
@@ -45,6 +45,22 @@
   "firstNameCanOnlyContainLetters": "Ad sadece harf içerebilir",
   "lastNameCannotBeEmpty": "Soyad boş olamaz",
   "lastNameMustBeAtLeast2Characters": "Soyad en az 2 karakter olmalıdır",
-  "lastNameCanOnlyContainLetters": "Soyad sadece harf içerebilir"
+  "lastNameCanOnlyContainLetters": "Soyad sadece harf içerebilir",
+  "favorites": "Favorilerim",
+  "emptyFavorites": "Henüz favori hayvanınız yok",
+  "profile": "Profil",
+  "personalInformation": "KİŞİSEL BİLGİLER",
+  "fullName": "Ad Soyad",
+  "email": "E-Posta",
+  "phone": "Telefon",
+  "address": "Adres",
+  "appSettings": "UYGULAMA AYARLARI",
+  "notifications": "Bildirimler",
+  "myOrders": "Siparişlerim",
+  "privacyPolicy": "Gizlilik Politikası",
+  "paymentMethods": "Ödeme Yöntemleri",
+  "editProfile": "Profili Düzenle",
+  "logout": "Çıkış Yap"
 }
+
 

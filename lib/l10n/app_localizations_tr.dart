@@ -15,13 +15,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get welcome => 'Hoş Geldiniz';
 
   @override
-  String get helloAgain => 'Tekrar Merhaba';
+  String get helloAgain => 'Tekrar Merhaba 👋 ';
 
   @override
   String get findYourBestFriend => 'Can Dostunu bul';
 
   @override
-  String get searchByBreedOrName => 'Irk veya isim ara';
+  String get searchByBreedOrName => 'Irk veya isim ara...';
 
   @override
   String get all => 'Hepsi';
@@ -151,4 +151,49 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get lastNameCanOnlyContainLetters => 'Soyad sadece harf içerebilir';
+
+  @override
+  String get favorites => 'Favorilerim';
+
+  @override
+  String get emptyFavorites => 'Henüz favori hayvanınız yok';
+
+  @override
+  String get profile => 'Profil';
+
+  @override
+  String get personalInformation => 'KİŞİSEL BİLGİLER';
+
+  @override
+  String get fullName => 'Ad Soyad';
+
+  @override
+  String get email => 'E-Posta';
+
+  @override
+  String get phone => 'Telefon';
+
+  @override
+  String get address => 'Adres';
+
+  @override
+  String get appSettings => 'UYGULAMA AYARLARI';
+
+  @override
+  String get notifications => 'Bildirimler';
+
+  @override
+  String get myOrders => 'Siparişlerim';
+
+  @override
+  String get privacyPolicy => 'Gizlilik Politikası';
+
+  @override
+  String get paymentMethods => 'Ödeme Yöntemleri';
+
+  @override
+  String get editProfile => 'Profili Düzenle';
+
+  @override
+  String get logout => 'Çıkış Yap';
 }

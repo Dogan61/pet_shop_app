@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:pet_shop_app/core/widgets/bottom_navigation_items.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pet_shop_app/core/constants/app_dimensions.dart';
+import 'package:pet_shop_app/core/constants/favorites_constants.dart';
+import 'package:pet_shop_app/core/constants/home_constants.dart';
+import 'package:pet_shop_app/core/constants/image_constants.dart';
+import 'package:pet_shop_app/core/constants/login_constants.dart';
+import 'package:pet_shop_app/core/constants/pet_constants.dart';
+import 'package:pet_shop_app/core/constants/ui_constants.dart';
+import 'package:pet_shop_app/core/controller/favorites_controller.dart';
+import 'package:pet_shop_app/core/models/pet_category.dart';
+import 'package:pet_shop_app/core/router/bottom_navigation_items.dart';
+import 'package:pet_shop_app/core/widgets/app_bars.dart';
 import 'package:pet_shop_app/feature/login/login_view.dart';
 import 'package:pet_shop_app/l10n/app_localizations.dart';
-
-enum PetCategory { all, dogs, cats, birds, rabbits, fish }
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -12,68 +21,81 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 
-const customImage =
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuB30H33gD7vSvt6pma1r5uTR75MptUjQK9ueduSTPZ_WNAZiZjSSRFj8KtLSX2Snhm0FKPtNb5ESWESPPPwp82a-cmx1Yvp3N-J0TUJsDP_5fSKOjChnl_8l7eyk4Iritk9wZe4hAHkf4RmUHh3h9IeAcbECyCbYrxaCqNbvVZw3ROsSn8PaF8BxIrR2wE94759nxlgAsd2veY3AaGc1jXjaqO_8qod-P6dA7Cwt0mszH66qNH4eQh9Qmie7Ff17XwPlfwCNfv7a2JR';
-
 class _HomeViewState extends State<HomeView> {
   PetCategory _selectedCategory = PetCategory.all;
   int _currentIndex = 0;
 
-  late final void Function(int) _onBottomNavTap = BottomNavigationItems.createOnTapHandler(
-    setState,
-    (index) => _currentIndex = index,
-  );
+  void Function(int) _onBottomNavTap(BuildContext context) {
+    return BottomNavigationItems.createRouteHandler(
+      context,
+      setState,
+      (index) => _currentIndex = index,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) {
+      return const Scaffold(
+          body: Center(child: Text(UIConstants.localizationsNotAvailable)));
+    }
     return Scaffold(
-      appBar: AppBar(),
+      appBar: const EmptyAppBar(),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: AppDimensionsPadding.allMedium(context),
           child: Column(
             children: [
               ListTile(
                 leading: Container(
-                  width: 48,
-                  height: 48,
+                  width: AppDimensionsSize.avatarSize(context),
+                  height: AppDimensionsSize.avatarSize(context),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: AppDimensionsRadius.circularMedium(context),
                     border: Border.all(
-                      color: const Color.fromARGB(255, 94, 172, 96),
+                      color: HomeConstants.avatarBorderColor,
                     ),
                     image: const DecorationImage(
-                      image: NetworkImage(customImage),
+                      image: NetworkImage(LoginConstants.loginImageHeader),
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
                 title: Text(l10n.helloAgain),
-                subtitle: Text(l10n.findYourBestFriend),
+                subtitle: Text(
+                  l10n.findYourBestFriend,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        fontSize: AppDimensionsFontSize.large(context),
+                      ),
+                ),
                 trailing: Container(
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(12),
+                    color: HomeConstants.grey200,
+                    borderRadius: AppDimensionsRadius.circularSmall(context),
                   ),
                   child: const Icon(Icons.notifications),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 16, bottom: 16),
+                padding: EdgeInsets.only(
+                  top: AppDimensionsSpacing.medium(context),
+                  bottom: AppDimensionsSpacing.medium(context),
+                ),
                 child: SearchBar(
-                  backgroundColor: WidgetStateProperty.all(Colors.white),
+                  backgroundColor: WidgetStateProperty.all(HomeConstants.white),
                   hintText: l10n.searchByBreedOrName,
                   leading: const Icon(Icons.search),
                   padding: WidgetStateProperty.all(
-                    const EdgeInsets.symmetric(horizontal: 16),
+                    AppDimensionsPadding.symmetricHorizontalMedium(context),
                   ),
                   trailing: const [Icon(Icons.outlined_flag)],
                 ),
               ),
               // Filter buttons with horizontal scroll
-              CustomFilterSection(),
-              const SizedBox(height: 20),
+              customFilterSection(),
+              AppDimensionsSpacing.verticalMedium(context),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -88,34 +110,8 @@ class _HomeViewState extends State<HomeView> {
                 ],
               ),
               Expanded(
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(16),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 3 / 4,
-                  ),
-                  itemCount: 20,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: Colors.orangeAccent,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Item $index',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
+                child: HomeCustomGrid(
+                  selectedCategory: _selectedCategory,
                 ),
               )
             ],
@@ -125,21 +121,24 @@ class _HomeViewState extends State<HomeView> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: _currentIndex,
-        onTap: _onBottomNavTap,
-        selectedItemColor: const Color(0xFF7BAF7B),
-        unselectedItemColor: Colors.grey,
-        items: BottomNavigationItems.items,
+        onTap: _onBottomNavTap(context),
+        selectedItemColor: HomeConstants.primaryColor,
+        unselectedItemColor: HomeConstants.grey,
+        items: BottomNavigationItems.getItems(),
       ),
     );
   }
 
-  Widget CustomFilterSection() {
-    final l10n = AppLocalizations.of(context)!;
+  Widget customFilterSection() {
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) {
+      return const SizedBox.shrink();
+    }
     return SizedBox(
-      height: 56,
+      height: AppDimensionsSize.filterSectionHeight(context),
       child: ListView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(),
+        padding: EdgeInsets.zero,
         children: [
           _CategoryFilterButton(
             label: l10n.all,
@@ -151,7 +150,7 @@ class _HomeViewState extends State<HomeView> {
               });
             },
           ),
-          const SizedBox(width: 12),
+          AppDimensionsSpacing.horizontalSmall(context),
           _CategoryFilterButton(
             label: l10n.dogs,
             category: PetCategory.dogs,
@@ -162,7 +161,7 @@ class _HomeViewState extends State<HomeView> {
               });
             },
           ),
-          const SizedBox(width: 12),
+          AppDimensionsSpacing.horizontalSmall(context),
           _CategoryFilterButton(
             label: l10n.cats,
             category: PetCategory.cats,
@@ -173,7 +172,7 @@ class _HomeViewState extends State<HomeView> {
               });
             },
           ),
-          const SizedBox(width: 12),
+          AppDimensionsSpacing.horizontalSmall(context),
           _CategoryFilterButton(
             label: l10n.birds,
             category: PetCategory.birds,
@@ -184,7 +183,7 @@ class _HomeViewState extends State<HomeView> {
               });
             },
           ),
-          const SizedBox(width: 12),
+          AppDimensionsSpacing.horizontalSmall(context),
           _CategoryFilterButton(
             label: l10n.rabbits,
             category: PetCategory.rabbits,
@@ -195,7 +194,7 @@ class _HomeViewState extends State<HomeView> {
               });
             },
           ),
-          const SizedBox(width: 12),
+          AppDimensionsSpacing.horizontalSmall(context),
           _CategoryFilterButton(
             label: l10n.fish,
             category: PetCategory.fish,
@@ -207,6 +206,310 @@ class _HomeViewState extends State<HomeView> {
             },
           ),
         ],
+      ),
+    );
+  }
+}
+
+class HomeCustomGrid extends StatelessWidget {
+  const HomeCustomGrid({
+    required this.selectedCategory,
+    super.key,
+  });
+
+  final PetCategory selectedCategory;
+
+  @override
+  Widget build(BuildContext context) {
+    const petImages = ImageConstants.petImages;
+    final filteredIndices = _filterPetsByCategory();
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: AppDimensionsPadding.allMedium(context),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: AppDimensionsGrid.crossAxisCount(context),
+        crossAxisSpacing: AppDimensionsGrid.spacing(context),
+        mainAxisSpacing: AppDimensionsGrid.spacing(context),
+        childAspectRatio: 0.67,
+      ),
+      itemCount: filteredIndices.length,
+      itemBuilder: (context, index) {
+        final petIndex = filteredIndices[index];
+        final imageUrl = petImages[petIndex % petImages.length];
+        return _PetCard(
+          imageUrl: imageUrl,
+          index: petIndex,
+        );
+      },
+    );
+  }
+
+  /// Filter pets by selected category and return their indices
+  List<int> _filterPetsByCategory() {
+    if (selectedCategory == PetCategory.all) {
+      // Show all pets (using a reasonable number for display)
+      return List.generate(10, (index) => index);
+    }
+
+    final filtered = <int>[];
+    // Check each pet breed to determine category
+    for (var i = 0; i < PetConstants.petBreeds.length; i++) {
+      final breed = PetConstants.petBreeds[i];
+      final petCategory = _getCategoryFromBreed(breed);
+
+      if (petCategory == selectedCategory) {
+        filtered.add(i);
+      }
+    }
+
+    return filtered;
+  }
+
+  /// Get category from breed name
+  PetCategory _getCategoryFromBreed(String breed) {
+    final breedUpper = breed.toUpperCase();
+    if (breedUpper.contains('RETRIEVER') ||
+        breedUpper.contains('LABRADOR') ||
+        breedUpper.contains('SHEPHERD') ||
+        breedUpper.contains('BULLDOG') ||
+        breedUpper.contains('BEAGLE')) {
+      return PetCategory.dogs;
+    } else if (breedUpper.contains('PERSIAN') ||
+        breedUpper.contains('SIAMESE') ||
+        breedUpper.contains('MAINE COON') ||
+        breedUpper.contains('RAGDOLL') ||
+        breedUpper.contains('BRITISH SHORTHAIR')) {
+      return PetCategory.cats;
+    } else if (breedUpper.contains('BIRD') ||
+        breedUpper.contains('PARROT') ||
+        breedUpper.contains('CANARY')) {
+      return PetCategory.birds;
+    } else if (breedUpper.contains('RABBIT') || breedUpper.contains('BUNNY')) {
+      return PetCategory.rabbits;
+    } else if (breedUpper.contains('FISH') || breedUpper.contains('GOLDFISH')) {
+      return PetCategory.fish;
+    }
+    return PetCategory.all;
+  }
+}
+
+class _PetCard extends StatefulWidget {
+  const _PetCard({
+    required this.imageUrl,
+    required this.index,
+  });
+
+  final String imageUrl;
+  final int index;
+
+  @override
+  State<_PetCard> createState() => _PetCardState();
+}
+
+class _PetCardState extends State<_PetCard> {
+  @override
+  Widget build(BuildContext context) {
+    final isFavorite = FavoritesController.isFavorite(widget.index);
+
+    return GestureDetector(
+      onTap: () {
+        context.push('/pet-detail/${widget.index}');
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: HomeConstants.white,
+          borderRadius: AppDimensionsRadius.circularMedium(context),
+          boxShadow: const [
+            BoxShadow(
+              blurRadius: 1,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // Main pet image - circular
+                      Container(
+                        width: AppDimensions.widthPercent(context, 35),
+                        height: AppDimensions.widthPercent(context, 35),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: HomeConstants.white,
+                            width: 3,
+                          ),
+                          image: DecorationImage(
+                            image: NetworkImage(widget.imageUrl),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+
+                      // Distance badge (bottom left)
+                      Positioned(
+                        bottom: AppDimensionsPadding.small(context),
+                        left: AppDimensionsPadding.small(context),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppDimensionsPadding.small(context),
+                            vertical: AppDimensionsPadding.extraSmall(context),
+                          ),
+                          decoration: BoxDecoration(
+                            color: HomeConstants.white,
+                            borderRadius:
+                                AppDimensionsRadius.circularSmall(context),
+                            border: Border.all(
+                                color: HomeConstants.locationIconColor),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.location_on,
+                                color: HomeConstants.locationIconColor,
+                                size: AppDimensionsSize.iconSizeSmall(context),
+                              ),
+                              SizedBox(
+                                width:
+                                    AppDimensionsSpacing.extraSmall(context) /
+                                        2,
+                              ),
+                              Text(
+                                PetConstants.distances[
+                                    widget.index % PetConstants.distances.length],
+                                style: TextStyle(
+                                  color: HomeConstants.distanceTextColor,
+                                  fontSize:
+                                      AppDimensionsFontSize.extraSmall(context),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Pet info section
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppDimensionsPadding.small(context),
+                    vertical: AppDimensionsPadding.extraSmall(context) * 0.5,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Name and gender icon row
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              PetConstants.petNames[
+                                  widget.index % PetConstants.petNames.length],
+                              style: TextStyle(
+                                fontSize: AppDimensionsFontSize.medium(context),
+                                fontWeight: FontWeight.bold,
+                                color: HomeConstants.darkTextColor,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          SizedBox(
+                            width: AppDimensionsSpacing.extraSmall(context),
+                          ),
+                          Container(
+                            width: AppDimensionsSize.iconSizeSmall(context),
+                            height: AppDimensionsSize.iconSizeSmall(context),
+                            decoration: const BoxDecoration(
+                              color: HomeConstants.genderIconColor,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.male,
+                              color: HomeConstants.white,
+                              size: AppDimensionsSize.iconSizeSmall(context) *
+                                  0.7,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                          height:
+                              AppDimensionsSpacing.extraSmall(context) * 0.3),
+                      // Breed
+                      Text(
+                        PetConstants
+                            .petBreeds[widget.index % PetConstants.petBreeds.length],
+                        style: TextStyle(
+                          fontSize: AppDimensionsFontSize.extraSmall(context),
+                          fontWeight: FontWeight.w600,
+                          color: HomeConstants.breedTextColor,
+                          letterSpacing: 0.3,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(
+                          height:
+                              AppDimensionsSpacing.extraSmall(context) * 0.3),
+                      // Age
+                      Text(
+                        PetConstants
+                            .petAges[widget.index % PetConstants.petAges.length],
+                        style: TextStyle(
+                          fontSize:
+                              AppDimensionsFontSize.extraSmall(context) * 0.9,
+                          color: HomeConstants.grey600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            // Favorite button (top right) - on outer container
+            Positioned(
+              top: AppDimensionsPadding.small(context),
+              right: 0,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    FavoritesController.toggleFavorite(widget.index);
+                  });
+                },
+                child: Container(
+                  width: AppDimensionsSize.iconSizeMedium(context),
+                  height: AppDimensionsSize.iconSizeMedium(context),
+                  decoration: BoxDecoration(
+                    color: isFavorite
+                        ? FavoritesConstants.red
+                        : HomeConstants.grey,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: HomeConstants.white,
+                    size: AppDimensionsSize.iconSizeSmall(context),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -230,14 +533,18 @@ class _CategoryFilterButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        height: 50,
+        padding: EdgeInsets.symmetric(
+          horizontal: AppDimensionsPadding.extraSmall(context),
+          vertical: AppDimensionsPadding.extraSmall(context),
+        ),
+        height: AppDimensionsSize.filterButtonHeight(context),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF7BAF7B) : Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          color: isSelected ? HomeConstants.primaryColor : HomeConstants.white,
+          borderRadius: AppDimensionsRadius.circularMedium(context),
           border: Border.all(
-            color: isSelected ? const Color(0xFF7BAF7B) : Colors.grey.shade300,
-            width: 1.5,
+            color:
+                isSelected ? HomeConstants.primaryColor : HomeConstants.grey300,
+            width: AppDimensionsBorderWidth.normal(context),
           ),
         ),
         child: Row(
@@ -246,16 +553,16 @@ class _CategoryFilterButton extends StatelessWidget {
           children: [
             Icon(
               Icons.pets,
-              size: 16,
-              color: isSelected ? Colors.white : Colors.grey.shade600,
+              size: AppDimensionsSize.iconSizeSmall(context),
+              color: isSelected ? HomeConstants.white : HomeConstants.grey600,
             ),
-            const SizedBox(width: 12),
+            AppDimensionsSpacing.horizontalSmall(context),
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? Colors.white : Colors.grey.shade700,
+                color: isSelected ? HomeConstants.white : HomeConstants.grey700,
                 fontWeight: FontWeight.w600,
-                fontSize: 16,
+                fontSize: AppDimensionsFontSize.medium(context),
               ),
             ),
           ],

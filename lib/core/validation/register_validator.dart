@@ -28,15 +28,12 @@ class RegisterValidator {
     if (value == null || value.isEmpty) {
       return l10n?.lastNameCannotBeEmpty;
     }
-
     if (value.length < 2) {
       return l10n?.lastNameMustBeAtLeast2Characters;
     }
-
     if (!RegExp(r'^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]+$').hasMatch(value)) {
       return l10n?.lastNameCanOnlyContainLetters;
     }
-
     return null;
   }
 

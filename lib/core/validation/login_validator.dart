@@ -23,13 +23,14 @@ class LoginValidator {
 
   /// Password validation (for login - minimum 6 characters)
   static String? validatePassword(String? value, BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     if (value == null || value.isEmpty) {
-      return l10n.passwordCannotBeEmpty;
+      return l10n?.passwordCannotBeEmpty ?? 'Password cannot be empty';
     }
 
     if (value.length < 6) {
-      return l10n.passwordMustBeAtLeast6Characters;
+      return l10n?.passwordMustBeAtLeast6Characters ??
+          'Password must be at least 6 characters';
     }
 
     return null;

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pet_shop_app/core/constants/app_dimensions.dart';
 import 'package:pet_shop_app/core/constants/login_constants.dart';
+import 'package:pet_shop_app/core/constants/ui_constants.dart';
+import 'package:pet_shop_app/core/controller/login_controller.dart';
 import 'package:pet_shop_app/core/validation/login_validator.dart';
-import 'package:pet_shop_app/feature/login/controller/login_controller.dart';
+import 'package:pet_shop_app/core/widgets/app_bars.dart';
 import 'package:pet_shop_app/l10n/app_localizations.dart';
 
 class LoginView extends StatefulWidget {
@@ -30,24 +33,28 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) {
+      return const Scaffold(
+          body: Center(child: Text(UIConstants.localizationsNotAvailable)));
+    }
     return Scaffold(
-        appBar: AppBar(),
+        appBar: const EmptyAppBar(),
         body: SingleChildScrollView(
           child: Form(
             key: _controller.formKey,
             child: Column(
               children: [
-                const SizedBox(height: 24),
+                AppDimensionsSpacing.verticalLarge(context),
 
                 /// Logo
                 Center(
                   child: Container(
-                    width: 120,
-                    height: 120,
+                    width: AppDimensionsSize.logoSize(context),
+                    height: AppDimensionsSize.logoSize(context),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: AppDimensionsRadius.circularMedium(context),
+                      border: Border.all(color: LoginConstants.grey300),
                       image: const DecorationImage(
                         image: NetworkImage(LoginConstants.loginImageHeader),
                         fit: BoxFit.cover,
@@ -56,7 +63,7 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ),
 
-                const SizedBox(height: 24),
+                AppDimensionsSpacing.verticalLarge(context),
 
                 /// Welcome text
                 CustomWelcomeText(
@@ -64,7 +71,7 @@ class _LoginViewState extends State<LoginView> {
                   theme: theme,
                 ),
 
-                const SizedBox(height: 8),
+                AppDimensionsSpacing.verticalExtraSmall(context),
 
                 Text(
                   l10n.signInToYourAccountToContinue,
@@ -73,11 +80,12 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ),
 
-                const SizedBox(height: 32),
+                AppDimensionsSpacing.verticalExtraLarge(context),
 
                 /// Form
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  padding:
+                      AppDimensionsPadding.symmetricHorizontalLarge(context),
                   child: Column(
                     children: [
                       CustomLoginTextField(
@@ -88,7 +96,7 @@ class _LoginViewState extends State<LoginView> {
                         validator: (value) =>
                             LoginValidator.validateEmail(value, context),
                       ),
-                      const SizedBox(height: 12),
+                      AppDimensionsSpacing.verticalSmall(context),
                       CustomLoginTextField(
                         controller: _controller.passwordController,
                         customHintText: l10n.password,
@@ -110,7 +118,8 @@ class _LoginViewState extends State<LoginView> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          padding: AppDimensionsPadding.symmetricVerticalMedium(
+                              context),
                           child: Text(
                             l10n.forgotPassword,
                             style: theme.textTheme.bodyMedium?.copyWith(
@@ -121,76 +130,35 @@ class _LoginViewState extends State<LoginView> {
                       ),
 
                       /// Login button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 52,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (!_controller.formKey.currentState!.validate()) {
-                              return;
-                            }
+                      _CustomLoginButton(controller: _controller, l10n: l10n),
 
-                            if (LoginValidator.validateLoginForm(
-                              email: _controller.email,
-                              password: _controller.password,
-                              context: context,
-                            )) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(l10n.loginSuccessful)),
-                              );
-                              // TODO: Login operation will be performed here
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF7BAF7B),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(28),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                l10n.signIn,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              const Icon(Icons.arrow_forward,
-                                  color: Colors.white),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
+                      AppDimensionsSpacing.verticalLarge(context),
 
                       /// Divider
                       Row(
                         children: [
-                          const Expanded(
+                          Expanded(
                             child: Divider(
-                              color: Color(0xFFD3E7D3),
-                              thickness: 1,
+                              color: LoginConstants.lightGreen,
+                              thickness: AppDimensionsBorderWidth.thin(context),
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            padding:
+                                AppDimensionsPadding.symmetricHorizontalSmall(
+                                    context),
                             child: Text(
                               l10n.orContinueWith,
                               style: const TextStyle(
-                                color: Color(0xFF7BAF7B),
+                                color: LoginConstants.primaryColor,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
-                          const Expanded(
+                          Expanded(
                             child: Divider(
-                              color: Color(0xFFD3E7D3),
-                              thickness: 1,
+                              color: LoginConstants.lightGreen,
+                              thickness: AppDimensionsBorderWidth.thin(context),
                             ),
                           ),
                         ],
@@ -200,7 +168,7 @@ class _LoginViewState extends State<LoginView> {
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: AppDimensionsPadding.allMedium(context),
                   child: Row(
                     children: [
                       Expanded(
@@ -210,7 +178,7 @@ class _LoginViewState extends State<LoginView> {
                           onPressed: () {},
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      AppDimensionsSpacing.horizontalSmall(context),
                       Expanded(
                         child: SocialLoginButton(
                           text: l10n.facebook,
@@ -225,13 +193,13 @@ class _LoginViewState extends State<LoginView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(l10n.dontHaveAnAccount),
-                    const SizedBox(width: 8),
+                    AppDimensionsSpacing.horizontalExtraSmall(context),
                     TextButton(
                       child: Text(
                         l10n.signUp,
                         style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
-                      onPressed: () => context.go('/register'),
+                      onPressed: () => context.go(LoginConstants.registerRoute),
                     ),
                   ],
                 )
@@ -297,7 +265,7 @@ class CustomLoginTextField extends StatelessWidget {
         hintText: customHintText,
         prefixIcon: Icon(
           customIcon,
-          color: const Color(0xFF7BAF7B),
+          color: LoginConstants.primaryColor,
         ),
         suffixIcon: visibilityIcon != null && onVisibilityToggle != null
             ? IconButton(
@@ -306,35 +274,37 @@ class CustomLoginTextField extends StatelessWidget {
               )
             : null,
         filled: true,
-        fillColor: const Color(0xFFF7FBF7),
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+        fillColor: LoginConstants.lightBackground,
+        contentPadding: EdgeInsets.symmetric(
+          vertical: AppDimensionsPadding.medium(context),
+          horizontal: AppDimensionsPadding.large(context),
+        ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24),
-          borderSide: const BorderSide(
-            color: Color(0xFFD3E7D3),
-            width: 1.5,
+          borderRadius: AppDimensionsRadius.circularLarge(context),
+          borderSide: BorderSide(
+            color: LoginConstants.lightGreen,
+            width: AppDimensionsBorderWidth.normal(context),
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(32),
-          borderSide: const BorderSide(
-            color: Color(0xFF7BAF7B),
-            width: 2,
+          borderRadius: AppDimensionsRadius.circularExtraLarge(context),
+          borderSide: BorderSide(
+            color: LoginConstants.primaryColor,
+            width: AppDimensionsBorderWidth.thick(context),
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24),
-          borderSide: const BorderSide(
-            color: Colors.red,
-            width: 1.5,
+          borderRadius: AppDimensionsRadius.circularLarge(context),
+          borderSide: BorderSide(
+            color: LoginConstants.red,
+            width: AppDimensionsBorderWidth.normal(context),
           ),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(32),
-          borderSide: const BorderSide(
-            color: Colors.red,
-            width: 2,
+          borderRadius: AppDimensionsRadius.circularExtraLarge(context),
+          borderSide: BorderSide(
+            color: LoginConstants.red,
+            width: AppDimensionsBorderWidth.thick(context),
           ),
         ),
       ),
@@ -357,14 +327,14 @@ class SocialLoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 52,
+      height: AppDimensionsSize.buttonHeight(context),
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-          backgroundColor: Colors.white,
-          side: const BorderSide(color: Color(0xFFD3E7D3)),
+          backgroundColor: LoginConstants.white,
+          side: const BorderSide(color: LoginConstants.lightGreen),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: AppDimensionsRadius.circularExtraLarge(context),
           ),
         ),
         child: Row(
@@ -372,21 +342,84 @@ class SocialLoginButton extends StatelessWidget {
           children: [
             Image.network(
               iconUrl,
-              height: 20,
-              width: 20,
+              height: AppDimensionsSize.iconSizeMedium(context),
+              width: AppDimensionsSize.iconSizeMedium(context),
               fit: BoxFit.contain,
-              errorBuilder: (_, __, ___) =>
-                  const Icon(Icons.image_not_supported, size: 20),
+              errorBuilder: (_, __, ___) => Icon(Icons.image_not_supported,
+                  size: AppDimensionsSize.iconSizeMedium(context)),
             ),
-            const SizedBox(width: 8),
+            AppDimensionsSpacing.horizontalExtraSmall(context),
             Text(
               text,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w600,
-                fontSize: 14,
-                color: Colors.black,
+                fontSize: AppDimensionsFontSize.small(context),
+                color: LoginConstants.black,
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CustomLoginButton extends StatelessWidget {
+  const _CustomLoginButton({
+    required LoginController controller,
+    required this.l10n,
+  }) : _controller = controller;
+
+  final LoginController _controller;
+  final AppLocalizations? l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: AppDimensionsSize.buttonHeight(context),
+      child: ElevatedButton(
+        onPressed: () {
+          if (!_controller.formKey.currentState!.validate()) {
+            return;
+          }
+
+          if (LoginValidator.validateLoginForm(
+            email: _controller.email,
+            password: _controller.password,
+            context: context,
+          )) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  l10n?.loginSuccessful ??
+                      LoginConstants.loginSuccessfulFallback,
+                ),
+              ),
+            );
+            // Navigate to home after successful login
+            context.go('/home');
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: LoginConstants.primaryColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: AppDimensionsRadius.circularExtraLarge(context),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              l10n?.signIn ?? LoginConstants.signInFallback,
+              style: TextStyle(
+                fontSize: AppDimensionsFontSize.medium(context),
+                fontWeight: FontWeight.w600,
+                color: LoginConstants.white,
+              ),
+            ),
+            SizedBox(width: AppDimensionsSpacing.extraSmall(context)),
+            const Icon(Icons.arrow_forward, color: LoginConstants.white),
           ],
         ),
       ),

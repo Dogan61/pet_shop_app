@@ -153,4 +153,49 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get lastNameCanOnlyContainLetters =>
       'Last name can only contain letters';
+
+  @override
+  String get favorites => 'Favorites';
+
+  @override
+  String get emptyFavorites => 'You don\'t have any favorite pets yet';
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get personalInformation => 'PERSONAL INFORMATION';
+
+  @override
+  String get fullName => 'Full Name';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get phone => 'Phone';
+
+  @override
+  String get address => 'Address';
+
+  @override
+  String get appSettings => 'APP SETTINGS';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get myOrders => 'My Orders';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get paymentMethods => 'Payment Methods';
+
+  @override
+  String get editProfile => 'Edit Profile';
+
+  @override
+  String get logout => 'Logout';
 }

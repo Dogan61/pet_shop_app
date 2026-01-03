@@ -373,6 +373,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Last name can only contain letters'**
   String get lastNameCanOnlyContainLetters;
+
+  /// Favorites page title
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get favorites;
+
+  /// Empty favorites message
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have any favorite pets yet'**
+  String get emptyFavorites;
+
+  /// Profile page title
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profile;
+
+  /// Personal information section header
+  ///
+  /// In en, this message translates to:
+  /// **'PERSONAL INFORMATION'**
+  String get personalInformation;
+
+  /// Full name label
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get fullName;
+
+  /// Email label
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// Phone label
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get phone;
+
+  /// Address label
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get address;
+
+  /// App settings section header
+  ///
+  /// In en, this message translates to:
+  /// **'APP SETTINGS'**
+  String get appSettings;
+
+  /// Notifications setting
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// My orders menu item
+  ///
+  /// In en, this message translates to:
+  /// **'My Orders'**
+  String get myOrders;
+
+  /// Privacy policy menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// Payment methods menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Methods'**
+  String get paymentMethods;
+
+  /// Edit profile button
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfile;
+
+  /// Logout button
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout;
 }
 
 class _AppLocalizationsDelegate

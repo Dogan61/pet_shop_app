@@ -183,6 +183,67 @@
   "lastNameCanOnlyContainLetters": "Last name can only contain letters",
   "@lastNameCanOnlyContainLetters": {
     "description": "Last name format validation error"
+  },
+  "favorites": "Favorites",
+  "@favorites": {
+    "description": "Favorites page title"
+  },
+  "emptyFavorites": "You don't have any favorite pets yet",
+  "@emptyFavorites": {
+    "description": "Empty favorites message"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile page title"
+  },
+  "personalInformation": "PERSONAL INFORMATION",
+  "@personalInformation": {
+    "description": "Personal information section header"
+  },
+  "fullName": "Full Name",
+  "@fullName": {
+    "description": "Full name label"
+  },
+  "email": "Email",
+  "@email": {
+    "description": "Email label"
+  },
+  "phone": "Phone",
+  "@phone": {
+    "description": "Phone label"
+  },
+  "address": "Address",
+  "@address": {
+    "description": "Address label"
+  },
+  "appSettings": "APP SETTINGS",
+  "@appSettings": {
+    "description": "App settings section header"
+  },
+  "notifications": "Notifications",
+  "@notifications": {
+    "description": "Notifications setting"
+  },
+  "myOrders": "My Orders",
+  "@myOrders": {
+    "description": "My orders menu item"
+  },
+  "privacyPolicy": "Privacy Policy",
+  "@privacyPolicy": {
+    "description": "Privacy policy menu item"
+  },
+  "paymentMethods": "Payment Methods",
+  "@paymentMethods": {
+    "description": "Payment methods menu item"
+  },
+  "editProfile": "Edit Profile",
+  "@editProfile": {
+    "description": "Edit profile button"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout button"
   }
 }
+
 

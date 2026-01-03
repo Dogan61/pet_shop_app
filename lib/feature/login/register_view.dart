@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pet_shop_app/core/constants/app_dimensions.dart';
+import 'package:pet_shop_app/core/constants/login_constants.dart';
+import 'package:pet_shop_app/core/constants/ui_constants.dart';
+import 'package:pet_shop_app/core/controller/register_controller.dart';
 import 'package:pet_shop_app/core/validation/register_validator.dart';
-import 'package:pet_shop_app/feature/login/controller/register_controller.dart';
+import 'package:pet_shop_app/core/widgets/app_bars.dart';
 import 'package:pet_shop_app/l10n/app_localizations.dart';
 
 class RegisterView extends StatefulWidget {
@@ -28,30 +32,31 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) {
+      return const Scaffold(
+          body: Center(child: Text(UIConstants.localizationsNotAvailable)));
+    }
     return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(
-          onPressed: _controller.onBackPressed(context),
-        ),
+      appBar: BackAppBar(
+        onBackPressed: _controller.onBackPressed(context),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.only(left: 12, right: 12),
+        padding: AppDimensionsPadding.onlyLeftRightSmall(context),
         child: Form(
           key: _controller.formKey,
           child: Column(
             children: [
-              const SizedBox(height: 16),
+              AppDimensionsSpacing.verticalMedium(context),
 
               /// AVATAR
-              const CircleAvatar(
-                radius: 36,
-                backgroundImage: NetworkImage(
-                  'https://i.pravatar.cc/150?img=3',
+              CircleAvatar(
+                radius: AppDimensionsSize.avatarSize(context) / 2,
+                backgroundImage: const NetworkImage(
+                  LoginConstants.registerAvatarImage,
                 ),
               ),
-
-              const SizedBox(height: 16),
+              AppDimensionsSpacing.verticalMedium(context),
 
               /// TITLE
               Text(
@@ -61,16 +66,14 @@ class _RegisterViewState extends State<RegisterView> {
                     .headlineSmall
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
-
-              const SizedBox(height: 8),
+              AppDimensionsSpacing.verticalExtraSmall(context),
 
               /// SUBTITLE
               Text(
                 l10n.theBestForYourPets,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
-
-              const SizedBox(height: 24),
+              AppDimensionsSpacing.verticalLarge(context),
 
               /// NAME + SURNAME
               Row(
@@ -84,7 +87,7 @@ class _RegisterViewState extends State<RegisterView> {
                           RegisterValidator.validateFirstName(value, context),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  AppDimensionsSpacing.horizontalSmall(context),
                   Expanded(
                     child: _InputField(
                       controller: _controller.lastNameController,
@@ -96,8 +99,7 @@ class _RegisterViewState extends State<RegisterView> {
                   ),
                 ],
               ),
-
-              const SizedBox(height: 12),
+              AppDimensionsSpacing.verticalSmall(context),
 
               /// EMAIL
               _InputField(
@@ -108,8 +110,7 @@ class _RegisterViewState extends State<RegisterView> {
                 validator: (value) =>
                     RegisterValidator.validateEmail(value, context),
               ),
-
-              const SizedBox(height: 12),
+              AppDimensionsSpacing.verticalSmall(context),
 
               /// PASSWORD
               _InputField(
@@ -126,81 +127,40 @@ class _RegisterViewState extends State<RegisterView> {
                 validator: (value) =>
                     RegisterValidator.validatePassword(value, context),
               ),
-
-              const SizedBox(height: 24),
+              AppDimensionsSpacing.verticalLarge(context),
 
               /// REGISTER BUTTON
-              SizedBox(
-                width: double.infinity,
-                height: 54,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (!_controller.formKey.currentState!.validate()) {
-                      return;
-                    }
-
-                    if (RegisterValidator.validateRegisterForm(
-                      firstName: _controller.firstName,
-                      lastName: _controller.lastName,
-                      email: _controller.email,
-                      password: _controller.password,
-                      context: context,
-                    )) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l10n.registrationSuccessful)),
-                      );
-                      // TODO: Register operation will be performed here
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF8EE26B),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28),
-                    ),
-                  ),
-                  child: Text(
-                    l10n.signUp,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 20),
+              _CustomRegisterButton(controller: _controller, l10n: l10n),
+              AppDimensionsSpacing.verticalMedium(context),
 
               /// DIVIDER
               Row(
                 children: [
                   const Expanded(child: Divider()),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    padding: AppDimensionsPadding.symmetricHorizontalExtraSmall(
+                        context),
                     child: Text(l10n.or),
                   ),
                   const Expanded(child: Divider()),
                 ],
               ),
-
-              const SizedBox(height: 16),
+              AppDimensionsSpacing.verticalMedium(context),
 
               /// GOOGLE BUTTON
               _SocialButton(
                 text: l10n.signUpWithGoogle,
-                borderColor: Colors.grey.shade300,
+                borderColor: LoginConstants.grey300,
               ),
-
-              const SizedBox(height: 12),
+              AppDimensionsSpacing.verticalSmall(context),
 
               /// FACEBOOK BUTTON
               _SocialButton(
                 text: l10n.signUpWithFacebook,
-                backgroundColor: const Color(0xFF4267B2),
-                textColor: Colors.white,
+                backgroundColor: LoginConstants.facebookColor,
+                textColor: LoginConstants.white,
               ),
-
-              const SizedBox(height: 24),
+              AppDimensionsSpacing.verticalLarge(context),
 
               /// FOOTER
               Row(
@@ -208,18 +168,74 @@ class _RegisterViewState extends State<RegisterView> {
                 children: [
                   Text(l10n.alreadyHaveAnAccount),
                   GestureDetector(
-                    onTap: () => context.go('/login'),
+                    onTap: () => context.go(LoginConstants.loginRoute),
                     child: Text(
                       l10n.signIn,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF6BBF59),
+                        color: LoginConstants.registerLinkColor,
                       ),
                     ),
                   ),
                 ],
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CustomRegisterButton extends StatelessWidget {
+  const _CustomRegisterButton({
+    required RegisterController controller,
+    required this.l10n,
+  }) : _controller = controller;
+
+  final RegisterController _controller;
+  final AppLocalizations? l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: AppDimensionsSize.buttonHeight(context),
+      child: ElevatedButton(
+        onPressed: () {
+          if (!_controller.formKey.currentState!.validate()) {
+            return;
+          }
+          if (RegisterValidator.validateRegisterForm(
+            firstName: _controller.firstName,
+            lastName: _controller.lastName,
+            email: _controller.email,
+            password: _controller.password,
+            context: context,
+          )) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  l10n?.registrationSuccessful ??
+                      LoginConstants.registrationSuccessfulFallback,
+                ),
+              ),
+            );
+            // TODO: Register operation will be performed here
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: LoginConstants.registerButtonColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: AppDimensionsRadius.circularExtraLarge(context),
+          ),
+        ),
+        child: Text(
+          l10n?.signUp ?? LoginConstants.signUpFallback,
+          style: TextStyle(
+            fontSize: AppDimensionsFontSize.medium(context),
+            fontWeight: FontWeight.w600,
+            color: LoginConstants.black,
           ),
         ),
       ),
@@ -267,23 +283,23 @@ class _InputField extends StatelessWidget {
               )
             : null,
         filled: true,
-        fillColor: const Color(0xFFF7FBF7),
+        fillColor: LoginConstants.lightBackground,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: AppDimensionsRadius.circularLarge(context),
           borderSide: BorderSide.none,
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24),
-          borderSide: const BorderSide(
-            color: Colors.red,
-            width: 1.5,
+          borderRadius: AppDimensionsRadius.circularLarge(context),
+          borderSide: BorderSide(
+            color: LoginConstants.red,
+            width: AppDimensionsBorderWidth.normal(context),
           ),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24),
-          borderSide: const BorderSide(
-            color: Colors.red,
-            width: 2,
+          borderRadius: AppDimensionsRadius.circularLarge(context),
+          borderSide: BorderSide(
+            color: LoginConstants.red,
+            width: AppDimensionsBorderWidth.thick(context),
           ),
         ),
       ),
@@ -307,7 +323,7 @@ class _SocialButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 52,
+      height: AppDimensionsSize.buttonHeight(context),
       width: double.infinity,
       child: OutlinedButton(
         onPressed: () {},
@@ -317,17 +333,17 @@ class _SocialButton extends StatelessWidget {
               ? BorderSide(color: borderColor!)
               : BorderSide.none,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: AppDimensionsRadius.circularExtraLarge(context),
           ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(width: 12),
+            SizedBox(width: AppDimensionsSpacing.small(context)),
             Text(
               text,
               style: TextStyle(
-                color: textColor ?? Colors.black,
+                color: textColor ?? LoginConstants.black,
                 fontWeight: FontWeight.w600,
               ),
             ),
