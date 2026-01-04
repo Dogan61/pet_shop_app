@@ -12,7 +12,7 @@ import 'package:pet_shop_app/feature/auth/bloc/auth_state.dart';
 import 'package:pet_shop_app/feature/favorite/bloc/favorite_cubit.dart';
 import 'package:pet_shop_app/feature/favorite/bloc/favorite_state.dart';
 import 'package:pet_shop_app/feature/favorite/models/favorite_model.dart';
-import 'package:pet_shop_app/feature/favorites/widgets/favorites_card.dart';
+import 'package:pet_shop_app/feature/favorite/widgets/favorites_card.dart';
 import 'package:pet_shop_app/l10n/app_localizations.dart';
 
 class FavoritesView extends StatefulWidget {

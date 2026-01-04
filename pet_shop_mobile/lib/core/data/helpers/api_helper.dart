@@ -74,23 +74,16 @@ class ApiHelper {
 
   /// Handle DioException and extract error message
   static String handleError(DioException error, {String? defaultMessage}) {
-    // Log error details
-    print('❌ [API Error] ${error.requestOptions.method} ${error.requestOptions.path}');
-    print('❌ [API Error] Status Code: ${error.response?.statusCode}');
-    print('❌ [API Error] Response: ${error.response?.data}');
-    print('❌ [API Error] Message: ${error.message}');
     if (error.response != null) {
       final responseData = error.response?.data;
       if (responseData is Map<String, dynamic>) {
         final errorMessage = responseData[ApiResponseKeys.message] as String? ??
             defaultMessage ??
             ApiErrorMessages.networkError;
-        print('❌ [API Error] Extracted Message: $errorMessage');
         return errorMessage;
       }
     }
     final finalMessage = defaultMessage ?? ApiErrorMessages.networkError;
-    print('❌ [API Error] Final Message: $finalMessage');
     return finalMessage;
   }
 

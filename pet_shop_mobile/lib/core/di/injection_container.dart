@@ -34,16 +34,13 @@ Future<void> init() async {
       ),
     );
 
-    // Add logging interceptor
-    dio.interceptors.add(
-      LogInterceptor(
-        requestBody: true,
-        responseBody: true,
-        logPrint: (object) {
-          print('🌐 [HTTP] $object');
-        },
-      ),
-    );
+    // Add logging interceptor (disabled for production)
+    // dio.interceptors.add(
+    //   LogInterceptor(
+    //     requestBody: true,
+    //     responseBody: true,
+    //   ),
+    // );
 
     return dio;
   })
