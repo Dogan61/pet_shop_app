@@ -14,7 +14,7 @@ import 'package:pet_shop_app/feature/auth/bloc/auth_cubit.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_state.dart';
 import 'package:pet_shop_app/feature/favorite/bloc/favorite_cubit.dart';
 import 'package:pet_shop_app/feature/favorite/bloc/favorite_state.dart';
-import 'package:pet_shop_app/feature/login/login_view.dart';
+import 'package:pet_shop_app/feature/auth/views/login_view.dart';
 import 'package:pet_shop_app/feature/pet/bloc/pet_cubit.dart';
 import 'package:pet_shop_app/feature/pet/bloc/pet_state.dart';
 import 'package:pet_shop_app/feature/pet/models/pet_model.dart';

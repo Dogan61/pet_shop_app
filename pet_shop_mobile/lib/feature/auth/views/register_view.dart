@@ -11,7 +11,7 @@ import 'package:pet_shop_app/core/widgets/app_bars.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_cubit.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_state.dart';
 import 'package:pet_shop_app/feature/auth/models/auth_model.dart';
-import 'package:pet_shop_app/feature/login/mixins/login_mixin.dart';
+import 'package:pet_shop_app/feature/auth/mixins/login_mixin.dart';
 import 'package:pet_shop_app/l10n/app_localizations.dart';
 
 class RegisterView extends StatefulWidget {

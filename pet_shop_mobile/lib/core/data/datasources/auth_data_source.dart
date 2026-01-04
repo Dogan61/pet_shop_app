@@ -30,39 +30,27 @@ class AuthDataSourceImpl implements AuthDataSource {
     LoginRequestModel request,
   ) async {
     try {
-      print('🔵 [AuthDataSource] Login request started');
       final response = await dio.post<Map<String, dynamic>>(
         ApiEndpoints.login,
         data: request.toJson(),
       );
-      print('🔵 [AuthDataSource] Login response received: ${response.statusCode}');
-      print('🔵 [AuthDataSource] Response data: ${response.data}');
 
-      final result = ApiHelper.parseResponse<AuthDataModel>(
-        response,
-        (json) {
-          print('🔵 [AuthDataSource] Parsing AuthDataModel from: $json');
-          try {
-            final authData = AuthDataModel.fromJson(json as Map<String, dynamic>);
-            print('✅ [AuthDataSource] AuthDataModel parsed: user=${authData.user != null}, token=${authData.token != null}');
-            return authData;
-          } catch (e) {
-            print('❌ [AuthDataSource] Error parsing AuthDataModel: $e');
-            rethrow;
-          }
-        },
-        defaultErrorMessage: 'Login failed',
-      );
-      print('✅ [AuthDataSource] Login successful: ${result.success}');
+      final result = ApiHelper.parseResponse<AuthDataModel>(response, (json) {
+        try {
+          final authData = AuthDataModel.fromJson(json as Map<String, dynamic>);
+          return authData;
+        } catch (e) {
+          rethrow;
+        }
+      }, defaultErrorMessage: 'Login failed');
       return result;
     } on DioException catch (e) {
-      print('❌ [AuthDataSource] Login failed with DioException');
-      print('❌ [AuthDataSource] Error: ${e.toString()}');
-      final errorMessage = ApiHelper.handleError(e, defaultMessage: 'Login failed');
+      final errorMessage = ApiHelper.handleError(
+        e,
+        defaultMessage: 'Login failed',
+      );
       throw Exception(errorMessage);
     } catch (e) {
-      print('❌ [AuthDataSource] Login failed with unexpected error: $e');
-      print('❌ [AuthDataSource] Error type: ${e.runtimeType}');
       rethrow;
     }
   }
@@ -86,15 +74,12 @@ class AuthDataSourceImpl implements AuthDataSource {
         defaultErrorMessage: 'Registration failed',
       );
     } on DioException catch (e) {
-      print('❌ [AuthDataSource] Registration failed with DioException');
-      print('❌ [AuthDataSource] Error: ${e.toString()}');
       final errorMessage = ApiHelper.handleError(
         e,
         defaultMessage: 'Registration failed',
       );
       throw Exception(errorMessage);
     } catch (e) {
-      print('❌ [AuthDataSource] Registration failed with unexpected error: $e');
       rethrow;
     }
   }
@@ -116,15 +101,12 @@ class AuthDataSourceImpl implements AuthDataSource {
         defaultErrorMessage: 'Failed to get user',
       );
     } on DioException catch (e) {
-      print('❌ [AuthDataSource] GetCurrentUser failed with DioException');
-      print('❌ [AuthDataSource] Error: ${e.toString()}');
       final errorMessage = ApiHelper.handleError(
         e,
         defaultMessage: 'Failed to get user',
       );
       throw Exception(errorMessage);
     } catch (e) {
-      print('❌ [AuthDataSource] GetCurrentUser failed with unexpected error: $e');
       rethrow;
     }
   }
@@ -133,7 +115,9 @@ class AuthDataSourceImpl implements AuthDataSource {
   /// [idToken] - Google ID token from Google Sign In
   /// Returns authentication data (user and token) wrapped in ApiResponseModel
   @override
-  Future<ApiResponseModel<AuthDataModel>> loginWithGoogle(String idToken) async {
+  Future<ApiResponseModel<AuthDataModel>> loginWithGoogle(
+    String idToken,
+  ) async {
     try {
       final response = await dio.post<Map<String, dynamic>>(
         ApiEndpoints.loginWithGoogle,
@@ -146,15 +130,12 @@ class AuthDataSourceImpl implements AuthDataSource {
         defaultErrorMessage: 'Google login failed',
       );
     } on DioException catch (e) {
-      print('❌ [AuthDataSource] Google login failed with DioException');
-      print('❌ [AuthDataSource] Error: ${e.toString()}');
       final errorMessage = ApiHelper.handleError(
         e,
         defaultMessage: 'Google login failed',
       );
       throw Exception(errorMessage);
     } catch (e) {
-      print('❌ [AuthDataSource] Google login failed with unexpected error: $e');
       rethrow;
     }
   }
@@ -178,15 +159,12 @@ class AuthDataSourceImpl implements AuthDataSource {
         defaultErrorMessage: 'Facebook login failed',
       );
     } on DioException catch (e) {
-      print('❌ [AuthDataSource] Facebook login failed with DioException');
-      print('❌ [AuthDataSource] Error: ${e.toString()}');
       final errorMessage = ApiHelper.handleError(
         e,
         defaultMessage: 'Facebook login failed',
       );
       throw Exception(errorMessage);
     } catch (e) {
-      print('❌ [AuthDataSource] Facebook login failed with unexpected error: $e');
       rethrow;
     }
   }

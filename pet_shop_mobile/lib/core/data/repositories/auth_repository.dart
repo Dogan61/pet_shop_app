@@ -38,7 +38,9 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<ApiResponseModel<AuthDataModel>> loginWithGoogle(String idToken) async {
+  Future<ApiResponseModel<AuthDataModel>> loginWithGoogle(
+    String idToken,
+  ) async {
     return dataSource.loginWithGoogle(idToken);
   }
 

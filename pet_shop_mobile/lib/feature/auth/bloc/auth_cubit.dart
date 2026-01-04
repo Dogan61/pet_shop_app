@@ -8,30 +8,21 @@ class AuthCubit extends Cubit<AuthState> {
   final AuthRepository repository;
 
   Future<void> login(LoginRequestModel request) async {
-    print('🔵 [AuthCubit] Login started');
     emit(const AuthLoading());
     try {
       final response = await repository.login(request);
-      print('🔵 [AuthCubit] Login response received: success=${response.success}, data=${response.data != null}');
 
       if (response.success && response.data != null) {
         final authData = response.data!;
-        print('🔵 [AuthCubit] AuthData: user=${authData.user != null}, token=${authData.token != null}');
         if (authData.user != null && authData.token != null) {
-          print('✅ [AuthCubit] Emitting AuthAuthenticated state');
           emit(AuthAuthenticated(user: authData.user!, token: authData.token!));
-          print('✅ [AuthCubit] AuthAuthenticated state emitted');
         } else {
-          print('❌ [AuthCubit] Invalid response data - user or token is null');
           emit(const AuthError(message: 'Invalid response data'));
         }
       } else {
-        print('❌ [AuthCubit] Login failed: ${response.message}');
         emit(AuthError(message: response.message ?? 'Login failed'));
       }
     } catch (e) {
-      print('❌ [AuthCubit] Login error: $e');
-      print('❌ [AuthCubit] Error type: ${e.runtimeType}');
       emit(AuthError(message: e.toString()));
     }
   }
@@ -52,8 +43,6 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError(message: response.message ?? 'Registration failed'));
       }
     } catch (e) {
-      print('❌ [AuthCubit] Register error: $e');
-      print('❌ [AuthCubit] Error type: ${e.runtimeType}');
       emit(AuthError(message: e.toString()));
     }
   }
@@ -69,8 +58,6 @@ class AuthCubit extends Cubit<AuthState> {
         emit(const AuthUnauthenticated());
       }
     } catch (e) {
-      print('❌ [AuthCubit] GetCurrentUser error: $e');
-      print('❌ [AuthCubit] Error type: ${e.runtimeType}');
       emit(const AuthUnauthenticated());
     }
   }
@@ -98,8 +85,6 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError(message: response.message ?? 'Google login failed'));
       }
     } catch (e) {
-      print('❌ [AuthCubit] Google login error: $e');
-      print('❌ [AuthCubit] Error type: ${e.runtimeType}');
       emit(AuthError(message: e.toString()));
     }
   }
@@ -122,8 +107,6 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError(message: response.message ?? 'Facebook login failed'));
       }
     } catch (e) {
-      print('❌ [AuthCubit] Facebook login error: $e');
-      print('❌ [AuthCubit] Error type: ${e.runtimeType}');
       emit(AuthError(message: e.toString()));
     }
   }

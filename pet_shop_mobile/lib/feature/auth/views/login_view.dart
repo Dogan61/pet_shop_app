@@ -10,7 +10,7 @@ import 'package:pet_shop_app/core/widgets/app_bars.dart';
 import 'package:pet_shop_app/core/widgets/language_selector.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_cubit.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_state.dart';
-import 'package:pet_shop_app/feature/login/mixins/login_mixin.dart';
+import 'package:pet_shop_app/feature/auth/mixins/login_mixin.dart';
 import 'package:pet_shop_app/l10n/app_localizations.dart';
 import 'package:pet_shop_app/main.dart';
 
@@ -50,9 +50,6 @@ class _LoginViewState extends State<LoginView> with LoginMixin {
 
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-        print(
-          '🔔 [LoginView] Top-level listener triggered with state: ${state.runtimeType}',
-        );
         handleAuthState(context, state, l10n);
       },
       child: Scaffold(

@@ -29,7 +29,6 @@ mixin LoginMixin<T extends StatefulWidget> on State<T> {
         await context.read<AuthCubit>().loginWithGoogle(googleAuth.idToken!);
       }
     } catch (e) {
-      print('❌ [LoginMixin] Google Sign In error: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -62,7 +61,6 @@ mixin LoginMixin<T extends StatefulWidget> on State<T> {
         throw Exception(result.message ?? 'Facebook login failed');
       }
     } catch (e) {
-      print('❌ [LoginMixin] Facebook Sign In error: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -80,11 +78,7 @@ mixin LoginMixin<T extends StatefulWidget> on State<T> {
     AuthState state,
     AppLocalizations? l10n,
   ) {
-    print('🔍 [LoginMixin] handleAuthState called with: ${state.runtimeType}');
-
     if (state is AuthAuthenticated || state is AuthRegistered) {
-      print('✅ [LoginMixin] User authenticated, navigating to home...');
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -100,22 +94,16 @@ mixin LoginMixin<T extends StatefulWidget> on State<T> {
 
       // Navigate to home after successful login/register
       if (mounted) {
-        print('🚀 [LoginMixin] Navigating to ${LoginConstants.homeRoute}');
         try {
           context.go(LoginConstants.homeRoute);
-          print('✅ [LoginMixin] Navigation successful');
         } catch (e) {
-          print('❌ [LoginMixin] Navigation error: $e');
           // Try alternative navigation method
           Navigator.of(
             context,
           ).pushNamedAndRemoveUntil(LoginConstants.homeRoute, (route) => false);
         }
-      } else {
-        print('⚠️ [LoginMixin] Widget not mounted, cannot navigate');
       }
     } else if (state is AuthError) {
-      print('❌ [LoginMixin] Auth error: ${state.message}');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(state.message), backgroundColor: Colors.red),
       );
