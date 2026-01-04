@@ -42,6 +42,38 @@ migrate_working_dir/
 .pub/
 /build/
 
+# ============================================
+# CRITICAL: Environment Variables (DO NOT COMMIT)
+# ============================================
+.env
+.env.*
+.env.local
+.env.development
+.env.production
+.env.test
+*.env
+
+# Backend specific
+pet_shop_backend/.env
+pet_shop_backend/.env.*
+pet_shop_backend/node_modules/
+pet_shop_backend/firebase-debug.log
+pet_shop_backend/firebase-debug.*.log
+
+# Mobile specific
+pet_shop_mobile/.env
+pet_shop_mobile/.env.*
+
+# ============================================
+# CRITICAL: Firebase Service Account Keys (DO NOT COMMIT)
+# ============================================
+**/*firebase-adminsdk*.json
+**/firebase-service-account-key.json
+**/petshopapp-*-firebase-adminsdk-*.json
+pet_shop_backend/src/config/*firebase-adminsdk*.json
+pet_shop_backend/src/config/firebase-service-account-key.json
+pet_shop_backend/src/config/petshopapp-*-firebase-adminsdk-*.json
+
 # Symbolication related
 app.*.symbols
 
