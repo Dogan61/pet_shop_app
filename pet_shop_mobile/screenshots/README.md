@@ -1,0 +1,1 @@
+# Screenshots\n\nBu klasöre uygulama ekran görüntülerini ekleyin.\n\nÖnerilen ekran görüntüleri:\n- login.png - Giriş ekranı\n- home.png - Ana sayfa\n- favorites.png - Favoriler sayfası\n- profile.png - Profil sayfası\n- pet-detail.png - Evcil hayvan detay sayfası\n- admin-dashboard.png - Admin paneli\n\nEkran görüntüleri README.md dosyasında otomatik olarak gösterilecektir.

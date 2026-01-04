@@ -1,0 +1,257 @@
+{
+  "@@locale": "en",
+  "appTitle": "Pet Shop App",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "welcome": "Welcome",
+  "@welcome": {
+    "description": "Welcome text"
+  },
+  "helloAgain": "Hello Again",
+  "@helloAgain": {
+    "description": "Greeting text"
+  },
+  "findYourBestFriend": "Find your best friend",
+  "@findYourBestFriend": {
+    "description": "Subtitle text"
+  },
+  "searchByBreedOrName": "Search by breed or name",
+  "@searchByBreedOrName": {
+    "description": "Search bar hint text"
+  },
+  "all": "All",
+  "@all": {
+    "description": "All category filter"
+  },
+  "dogs": "Dogs",
+  "@dogs": {
+    "description": "Dogs category"
+  },
+  "cats": "Cats",
+  "@cats": {
+    "description": "Cats category"
+  },
+  "birds": "Birds",
+  "@birds": {
+    "description": "Birds category"
+  },
+  "rabbits": "Rabbits",
+  "@rabbits": {
+    "description": "Rabbits category"
+  },
+  "fish": "Fish",
+  "@fish": {
+    "description": "Fish category"
+  },
+  "nearbyFriends": "Nearby Friends",
+  "@nearbyFriends": {
+    "description": "Nearby friends section title"
+  },
+  "seeAll": "See All",
+  "@seeAll": {
+    "description": "See all button text"
+  },
+  "signInToYourAccountToContinue": "Sign in to your account to continue",
+  "@signInToYourAccountToContinue": {
+    "description": "Login page subtitle"
+  },
+  "enterYourEmail": "Enter your email",
+  "@enterYourEmail": {
+    "description": "Email input hint"
+  },
+  "password": "Password",
+  "@password": {
+    "description": "Password input label"
+  },
+  "forgotPassword": "Forgot Password?",
+  "@forgotPassword": {
+    "description": "Forgot password link"
+  },
+  "signIn": "Sign In",
+  "@signIn": {
+    "description": "Sign in button text"
+  },
+  "orContinueWith": "or continue with",
+  "@orContinueWith": {
+    "description": "Divider text for social login"
+  },
+  "google": "Google",
+  "@google": {
+    "description": "Google login button"
+  },
+  "facebook": "Facebook",
+  "@facebook": {
+    "description": "Facebook login button"
+  },
+  "dontHaveAnAccount": "Don't have an account?",
+  "@dontHaveAnAccount": {
+    "description": "Register link text"
+  },
+  "signUp": "Sign Up",
+  "@signUp": {
+    "description": "Sign up button text"
+  },
+  "createAccount": "Create Account",
+  "@createAccount": {
+    "description": "Register page title"
+  },
+  "theBestForYourPets": "The best for your pets",
+  "@theBestForYourPets": {
+    "description": "Register page subtitle"
+  },
+  "firstName": "First Name",
+  "@firstName": {
+    "description": "First name input hint"
+  },
+  "lastName": "Last Name",
+  "@lastName": {
+    "description": "Last name input hint"
+  },
+  "exampleEmail": "example@email.com",
+  "@exampleEmail": {
+    "description": "Email example placeholder"
+  },
+  "or": "or",
+  "@or": {
+    "description": "Divider text"
+  },
+  "signUpWithGoogle": "Sign up with Google",
+  "@signUpWithGoogle": {
+    "description": "Google sign up button"
+  },
+  "signUpWithFacebook": "Sign up with Facebook",
+  "@signUpWithFacebook": {
+    "description": "Facebook sign up button"
+  },
+  "alreadyHaveAnAccount": "Already have an account? ",
+  "@alreadyHaveAnAccount": {
+    "description": "Login link text"
+  },
+  "loginSuccessful": "Login successful",
+  "@loginSuccessful": {
+    "description": "Login success message"
+  },
+  "registrationSuccessful": "Registration successful",
+  "@registrationSuccessful": {
+    "description": "Registration success message"
+  },
+  "emailCannotBeEmpty": "Email address cannot be empty",
+  "@emailCannotBeEmpty": {
+    "description": "Email validation error"
+  },
+  "pleaseEnterValidEmail": "Please enter a valid email address",
+  "@pleaseEnterValidEmail": {
+    "description": "Email format validation error"
+  },
+  "passwordCannotBeEmpty": "Password cannot be empty",
+  "@passwordCannotBeEmpty": {
+    "description": "Password validation error"
+  },
+  "passwordMustBeAtLeast6Characters": "Password must be at least 6 characters long",
+  "@passwordMustBeAtLeast6Characters": {
+    "description": "Password length validation error for login"
+  },
+  "passwordMustBeAtLeast8Characters": "Password must be at least 8 characters long",
+  "@passwordMustBeAtLeast8Characters": {
+    "description": "Password length validation error for register"
+  },
+  "passwordMustContainUppercaseLowercaseAndDigit": "Password must contain at least one uppercase letter, one lowercase letter, and one digit",
+  "@passwordMustContainUppercaseLowercaseAndDigit": {
+    "description": "Password complexity validation error"
+  },
+  "firstNameCannotBeEmpty": "First name cannot be empty",
+  "@firstNameCannotBeEmpty": {
+    "description": "First name validation error"
+  },
+  "firstNameMustBeAtLeast2Characters": "First name must be at least 2 characters long",
+  "@firstNameMustBeAtLeast2Characters": {
+    "description": "First name length validation error"
+  },
+  "firstNameCanOnlyContainLetters": "First name can only contain letters",
+  "@firstNameCanOnlyContainLetters": {
+    "description": "First name format validation error"
+  },
+  "lastNameCannotBeEmpty": "Last name cannot be empty",
+  "@lastNameCannotBeEmpty": {
+    "description": "Last name validation error"
+  },
+  "lastNameMustBeAtLeast2Characters": "Last name must be at least 2 characters long",
+  "@lastNameMustBeAtLeast2Characters": {
+    "description": "Last name length validation error"
+  },
+  "lastNameCanOnlyContainLetters": "Last name can only contain letters",
+  "@lastNameCanOnlyContainLetters": {
+    "description": "Last name format validation error"
+  },
+  "favorites": "Favorites",
+  "@favorites": {
+    "description": "Favorites page title"
+  },
+  "emptyFavorites": "You don't have any favorite pets yet",
+  "@emptyFavorites": {
+    "description": "Empty favorites message"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile page title"
+  },
+  "personalInformation": "PERSONAL INFORMATION",
+  "@personalInformation": {
+    "description": "Personal information section header"
+  },
+  "fullName": "Full Name",
+  "@fullName": {
+    "description": "Full name label"
+  },
+  "email": "Email",
+  "@email": {
+    "description": "Email label"
+  },
+  "phone": "Phone",
+  "@phone": {
+    "description": "Phone label"
+  },
+  "address": "Address",
+  "@address": {
+    "description": "Address label"
+  },
+  "appSettings": "APP SETTINGS",
+  "@appSettings": {
+    "description": "App settings section header"
+  },
+  "notifications": "Notifications",
+  "@notifications": {
+    "description": "Notifications setting"
+  },
+  "myOrders": "My Orders",
+  "@myOrders": {
+    "description": "My orders menu item"
+  },
+  "privacyPolicy": "Privacy Policy",
+  "@privacyPolicy": {
+    "description": "Privacy policy menu item"
+  },
+  "paymentMethods": "Payment Methods",
+  "@paymentMethods": {
+    "description": "Payment methods menu item"
+  },
+  "editProfile": "Edit Profile",
+  "@editProfile": {
+    "description": "Edit profile button"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout button"
+  },
+  "logoutConfirmation": "Are you sure you want to logout?",
+  "@logoutConfirmation": {
+    "description": "Logout confirmation message"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button"
+  }
+}
+
+
