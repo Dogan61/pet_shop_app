@@ -1,56 +1,56 @@
 # 🐾 Pet Shop App - Full Stack Mobile Application
 
-Modern, full-stack pet shop uygulaması. Flutter ile geliştirilmiş mobil uygulama ve Node.js/Express.js ile geliştirilmiş RESTful API backend'i içeren kapsamlı bir proje.
+Modern, full-stack pet shop application. A comprehensive project including a mobile application developed with Flutter and a RESTful API backend developed with Node.js/Express.js.
 
-## 📱 Proje Hakkında
+## 📱 About the Project
 
-Pet Shop App, evcil hayvan satış platformu için geliştirilmiş tam kapsamlı bir mobil uygulamadır. Kullanıcılar evcil hayvanları görüntüleyebilir, favorilere ekleyebilir, detaylı bilgileri inceleyebilir ve profil yönetimi yapabilir. Admin paneli ile yöneticiler evcil hayvan yönetimi yapabilir.
+Pet Shop App is a comprehensive mobile application developed for a pet sales platform. Users can view pets, add them to favorites, examine detailed information, and manage their profiles. Administrators can manage pets through the admin panel.
 
-### 🎯 Proje Özellikleri
+### 🎯 Project Features
 
-- ✅ **Kullanıcı Yönetimi**: Kayıt, giriş, profil yönetimi
-- ✅ **Sosyal Giriş**: Google ve Facebook ile giriş desteği
-- ✅ **Evcil Hayvan Listeleme**: Kategori bazlı filtreleme ve arama
-- ✅ **Favori Sistemi**: Favorilere ekleme/çıkarma ve listeleme
-- ✅ **Detaylı Bilgi**: Evcil hayvan detay sayfaları (sağlık durumu, sahip bilgileri)
-- ✅ **Admin Paneli**: Evcil hayvan ekleme, düzenleme, silme
-- ✅ **Çoklu Dil Desteği**: Türkçe ve İngilizce
-- ✅ **Responsive Tasarım**: Farklı ekran boyutlarına uyumlu
-- ✅ **Clean Architecture**: Modüler ve ölçeklenebilir kod yapısı
-- ✅ **Test Coverage**: Unit ve widget testleri
-- ✅ **Code Quality**: Constants kullanımı, separation of concerns
-- ✅ **Backend Helpers**: Merkezi error handling ve response management
+- ✅ **User Management**: Registration, login, profile management
+- ✅ **Social Login**: Google and Facebook login support
+- ✅ **Pet Listing**: Category-based filtering and search
+- ✅ **Favorites System**: Add/remove favorites and listing
+- ✅ **Detailed Information**: Pet detail pages (health status, owner information)
+- ✅ **Admin Panel**: Add, edit, delete pets
+- ✅ **Multi-language Support**: Turkish and English
+- ✅ **Responsive Design**: Compatible with different screen sizes
+- ✅ **Clean Architecture**: Modular and scalable code structure
+- ✅ **Test Coverage**: Unit and widget tests
+- ✅ **Code Quality**: Constants usage, separation of concerns
+- ✅ **Backend Helpers**: Centralized error handling and response management
 
-## 🏗️ Proje Yapısı
+## 🏗️ Project Structure
 
 ```
 pet_shop_app/
-├── pet_shop_mobile/          # Flutter mobil uygulama
+├── pet_shop_mobile/          # Flutter mobile application
 │   ├── lib/
-│   │   ├── core/            # Temel yapılar (DI, routing, constants)
-│   │   ├── feature/         # Özellik bazlı modüller
-│   │   └── l10n/            # Lokalizasyon dosyaları
-│   └── assets/              # Görseller ve çeviri dosyaları
+│   │   ├── core/            # Core structures (DI, routing, constants)
+│   │   ├── feature/         # Feature-based modules
+│   │   └── l10n/            # Localization files
+│   └── assets/              # Images and translation files
 │
 └── pet_shop_backend/         # Node.js/Express.js backend
     ├── src/
-    │   ├── controllers/     # İş mantığı kontrolcüleri
-    │   ├── routes/          # API route tanımları
+    │   ├── controllers/     # Business logic controllers
+    │   ├── routes/          # API route definitions
     │   ├── middleware/      # Auth, error handling middleware
-    │   ├── config/          # Firebase, env konfigürasyonları
-    │   └── utils/           # Yardımcı fonksiyonlar
+    │   ├── config/          # Firebase, env configurations
+    │   └── utils/           # Helper functions
     │       ├── userHelper.js      # User profile helper functions
     │       ├── responseHelper.js  # Standardized API responses
     │       ├── errorHelper.js     # Centralized error handling
     │       └── firestoreHelper.js # Firestore utility functions
-    └── scripts/             # Seed ve admin scriptleri
+    └── scripts/             # Seed and admin scripts
 ```
 
-## 🛠️ Teknolojiler
+## 🛠️ Technologies
 
 ### 📱 Frontend (Mobile)
-- **Flutter** - Cross-platform mobil framework
-- **Dart** - Programlama dili
+- **Flutter** - Cross-platform mobile framework
+- **Dart** - Programming language
 - **BLoC/Cubit** - State management
 - **GoRouter** - Declarative routing
 - **Dio** - HTTP client
@@ -73,9 +73,9 @@ pet_shop_app/
 - **Morgan** - HTTP request logger
 - **Compression** - Response compression
 
-## 📸 Ekran Görüntüleri
+## 📸 Screenshots
 
-<!-- Ekran görüntüleri buraya eklenecek -->
+<!-- Screenshots will be added here -->
 <!-- 
 ### Giriş Ekranı
 ![Login Screen](screenshots/login.png)
@@ -96,24 +96,24 @@ pet_shop_app/
 ![Admin Dashboard](screenshots/admin-dashboard.png)
 -->
 
-## 🚀 Kurulum ve Çalıştırma
+## 🚀 Installation and Running
 
-### Gereksinimler
+### Requirements
 
 - Flutter SDK (>=3.8.0)
 - Dart SDK (>=3.8.0)
 - Node.js (>=18.0.0)
-- npm veya yarn
-- Firebase projesi ve service account key
+- npm or yarn
+- Firebase project and service account key
 
-### Backend Kurulumu
+### Backend Installation
 
 ```bash
 cd pet_shop_backend
 npm install
 ```
 
-`.env` dosyası oluşturun:
+Create `.env` file:
 ```env
 PORT=5001
 NODE_ENV=development
@@ -121,37 +121,37 @@ GOOGLE_APPLICATION_CREDENTIALS=config/firebase-service-account-key.json
 FIREBASE_WEB_API_KEY=your_firebase_web_api_key
 ```
 
-Backend'i başlatın:
+Start the backend:
 ```bash
 npm run dev
 ```
 
-### Mobile Kurulumu
+### Mobile Installation
 
 ```bash
 cd pet_shop_mobile
 flutter pub get
 ```
 
-`.env` dosyası oluşturun:
+Create `.env` file:
 ```env
 API_BASE_URL=http://localhost:5001
 ```
 
-Uygulamayı çalıştırın:
+Run the application:
 ```bash
 flutter run
 ```
 
-Detaylı kurulum talimatları için:
+For detailed installation instructions:
 - [Mobile README](pet_shop_mobile/README.md)
 - [Backend README](pet_shop_backend/README.md)
 
-## 🏛️ Mimari
+## 🏛️ Architecture
 
 ### Clean Architecture
 
-Proje Clean Architecture prensiplerine göre yapılandırılmıştır:
+The project is structured according to Clean Architecture principles:
 
 ```
 ┌─────────────────────────────────────┐
@@ -177,64 +177,64 @@ Proje Clean Architecture prensiplerine göre yapılandırılmıştır:
 
 ### State Management
 
-BLoC (Business Logic Component) pattern kullanılarak state management yapılmıştır:
-- **Cubit**: Basit state yönetimi için
-- **Equatable**: State karşılaştırmaları için
-- **BlocProvider**: Dependency injection için
+State management is implemented using the BLoC (Business Logic Component) pattern:
+- **Cubit**: For simple state management
+- **Equatable**: For state comparisons
+- **BlocProvider**: For dependency injection
 
 ### Dependency Injection
 
-GetIt service locator kullanılarak dependency injection yapılmıştır:
-- Singleton pattern için `registerLazySingleton`
-- Factory pattern için `registerFactory`
+Dependency injection is implemented using GetIt service locator:
+- `registerLazySingleton` for singleton pattern
+- `registerFactory` for factory pattern
 
-## 🔐 Güvenlik
+## 🔐 Security
 
-- Firebase Authentication ile güvenli kullanıcı yönetimi
-- JWT token tabanlı authentication
+- Secure user management with Firebase Authentication
+- JWT token-based authentication
 - Role-based access control (Admin/User)
-- Helmet ile güvenlik header'ları
-- CORS yapılandırması
-- Environment variables ile hassas bilgi yönetimi
-- `.gitignore` ile hassas dosyaların korunması
+- Security headers with Helmet
+- CORS configuration
+- Sensitive information management with environment variables
+- Protection of sensitive files with `.gitignore`
 
-## 📚 API Dokümantasyonu
+## 📚 API Documentation
 
-Backend API endpoint'leri:
+Backend API endpoints:
 
 ### Authentication
-- `POST /api/auth/register` - Kullanıcı kaydı
-- `POST /api/auth/login` - Kullanıcı girişi
-- `POST /api/auth/google` - Google ile giriş
-- `POST /api/auth/facebook` - Facebook ile giriş
-- `GET /api/auth/me` - Kullanıcı bilgileri
-- `POST /api/auth/logout` - Çıkış
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `POST /api/auth/google` - Google login
+- `POST /api/auth/facebook` - Facebook login
+- `GET /api/auth/me` - User information
+- `POST /api/auth/logout` - Logout
 
 ### Pets
-- `GET /api/pets` - Tüm evcil hayvanları listele
-- `GET /api/pets/:id` - Evcil hayvan detayı
-- `GET /api/pets/category/:category` - Kategoriye göre listele
+- `GET /api/pets` - List all pets
+- `GET /api/pets/:id` - Pet details
+- `GET /api/pets/category/:category` - List by category
 
 ### Favorites
-- `GET /api/favorites` - Favorileri listele
-- `POST /api/favorites` - Favori ekle
-- `DELETE /api/favorites/:id` - Favori sil
+- `GET /api/favorites` - List favorites
+- `POST /api/favorites` - Add favorite
+- `DELETE /api/favorites/:id` - Remove favorite
 
 ### Admin
-- `GET /api/admin/check` - Admin kontrolü
-- `POST /api/admin/pets` - Evcil hayvan ekle
-- `PUT /api/admin/pets/:id` - Evcil hayvan güncelle
-- `DELETE /api/admin/pets/:id` - Evcil hayvan sil
+- `GET /api/admin/check` - Admin check
+- `POST /api/admin/pets` - Add pet
+- `PUT /api/admin/pets/:id` - Update pet
+- `DELETE /api/admin/pets/:id` - Delete pet
 
 Postman collection: `pet_shop_backend/Pet_Shop_API.postman_collection.json`
 
-## 🌍 Lokalizasyon
+## 🌍 Localization
 
-Uygulama çoklu dil desteği sunar:
-- 🇹🇷 Türkçe
-- 🇬🇧 İngilizce
+The application supports multiple languages:
+- 🇹🇷 Turkish
+- 🇬🇧 English
 
-Lokalizasyon dosyaları: `pet_shop_mobile/assets/l10n/`
+Localization files: `pet_shop_mobile/assets/l10n/`
 
 ## 📦 Build ve Deploy
 
@@ -250,34 +250,34 @@ cd pet_shop_mobile
 flutter build ios --release
 ```
 
-## 🧪 Test
+## 🧪 Testing
 
-### Mobile Testleri
+### Mobile Tests
 
 ```bash
 cd pet_shop_mobile
 flutter test
 ```
 
-**Test Yapısı:**
-- ✅ Unit testler (BLoC/Cubit testleri)
-- ✅ Widget testleri
-- ✅ Test coverage raporu: `flutter test --coverage`
+**Test Structure:**
+- ✅ Unit tests (BLoC/Cubit tests)
+- ✅ Widget tests
+- ✅ Test coverage report: `flutter test --coverage`
 
-**Test Paketleri:**
-- `bloc_test` - BLoC/Cubit testleri için
-- `mocktail` - Mock objeler için
+**Test Packages:**
+- `bloc_test` - For BLoC/Cubit tests
+- `mocktail` - For mock objects
 
-**Test Klasör Yapısı:**
+**Test Folder Structure:**
 ```
 test/
-├── unit/              # Unit testler
-│   └── bloc/         # BLoC/Cubit testleri
-├── widgets/          # Widget testleri
-└── README.md         # Test dokümantasyonu
+├── unit/              # Unit tests
+│   └── bloc/         # BLoC/Cubit tests
+├── widgets/          # Widget tests
+└── README.md         # Test documentation
 ```
 
-### Backend Testleri
+### Backend Tests
 
 ```bash
 cd pet_shop_backend
@@ -285,19 +285,19 @@ npm test
 ```
 
 
-## 👨‍💻 Geliştirici
+## 👨‍💻 Developer
 
 **Dogan Senturk**
 
-- Portfolio: [GitHub Profil](https://github.com/Dogan61)
-- LinkedIn: [LinkedIn Profil](https://www.linkedin.com/in/dogan-senturk/)
+- Portfolio: [GitHub Profile](https://github.com/Dogan61)
+- LinkedIn: [LinkedIn Profile](https://www.linkedin.com/in/dogan-senturk/)
 - Email: dogansenturk51@gmail.com
 
-## 🙏 Teşekkürler
+## 🙏 Acknowledgments
 
-Bu projede kullanılan tüm açık kaynak kütüphanelere teşekkürler.
+Thanks to all open-source libraries used in this project.
 
 ---
 
-⭐ Bu projeyi beğendiyseniz yıldız vermeyi unutmayın!
+⭐ If you liked this project, don't forget to give it a star!
 
