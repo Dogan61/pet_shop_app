@@ -24,9 +24,6 @@ class ApiEndpoints {
 
   // Admin endpoints
   static const String adminCheck = '/admin/check';
-  static const String adminSetAdmin = '/admin/set-admin';
-  static const String adminRemoveAdmin = '/admin/remove-admin';
-  static const String adminAdmins = '/admin/admins';
 }
 
 /// API Response Keys

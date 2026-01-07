@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pet_shop_app/core/app/app_widget.dart';
+import 'package:pet_shop_app/core/constants/admin_constants.dart';
 import 'package:pet_shop_app/core/constants/app_dimensions.dart';
 import 'package:pet_shop_app/core/constants/image_constants.dart';
 import 'package:pet_shop_app/core/constants/login_constants.dart';
 import 'package:pet_shop_app/core/constants/ui_constants.dart';
 import 'package:pet_shop_app/core/controller/login_controller.dart';
+import 'package:pet_shop_app/core/di/injection_container.dart' as di;
 import 'package:pet_shop_app/core/validation/login_validator.dart';
 import 'package:pet_shop_app/core/widgets/app_bars.dart';
 import 'package:pet_shop_app/core/widgets/language_selector.dart';
+import 'package:pet_shop_app/feature/admin/bloc/admin_cubit.dart';
+import 'package:pet_shop_app/feature/admin/bloc/admin_state.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_cubit.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_state.dart';
 import 'package:pet_shop_app/feature/auth/mixins/login_mixin.dart';
 import 'package:pet_shop_app/l10n/app_localizations.dart';
-import 'package:pet_shop_app/main.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -23,6 +28,7 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> with LoginMixin {
   late final LoginController _controller;
+  bool _navigated = false;
 
   @override
   void initState() {
@@ -45,214 +51,329 @@ class _LoginViewState extends State<LoginView> with LoginMixin {
         body: Center(child: Text(UIConstants.localizationsNotAvailable)),
       );
     }
-    final appState = MyApp.of(context);
+    final appState = AppWidget.of(context);
     final currentLocale = appState?.locale ?? const Locale('en');
 
-    return BlocListener<AuthCubit, AuthState>(
-      listener: (context, state) {
-        handleAuthState(context, state, l10n);
-      },
-      child: Scaffold(
-        appBar: const EmptyAppBar(),
-        body: Stack(
-          children: [
-            SingleChildScrollView(
-              child: Form(
-                key: _controller.formKey,
-                child: Column(
-                  children: [
-                    AppDimensionsSpacing.verticalLarge(context),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: context.read<AuthCubit>()),
+        BlocProvider(create: (context) => di.sl<AdminCubit>()),
+      ],
+      child: BlocListener<AdminCubit, AdminState>(
+        listener: (context, adminState) {
+          if (_navigated) return;
 
-                    /// Logo
-                    Center(
-                      child: Container(
-                        width: AppDimensionsSize.logoSize(context),
-                        height: AppDimensionsSize.logoSize(context),
-                        decoration: BoxDecoration(
-                          borderRadius: AppDimensionsRadius.circularMedium(
-                            context,
-                          ),
-                          border: Border.all(color: LoginConstants.grey300),
-                          image: const DecorationImage(
-                            image: NetworkImage(
-                              LoginConstants.loginImageHeader,
+          if (adminState is AdminChecked) {
+            if (adminState.isAdmin) {
+              _navigated = true;
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(AdminConstants.adminLoginSuccess),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              if (mounted) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    context.go(AdminConstants.adminDashboardRoute);
+                  }
+                });
+              }
+            } else {
+              // Regular user, redirect to home
+              _navigated = true;
+              if (mounted) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    context.go(LoginConstants.homeRoute);
+                  }
+                });
+              }
+            }
+          } else if (adminState is AdminError) {
+            // Admin check error, redirect to home as regular user
+            _navigated = true;
+            if (mounted) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  context.go(LoginConstants.homeRoute);
+                }
+              });
+            }
+          }
+        },
+        child: BlocListener<AuthCubit, AuthState>(
+          listener: (context, state) {
+            // Show success/error messages
+            final successMessage = getAuthSuccessMessage(state, l10n);
+            if (successMessage != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(successMessage),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
+
+            final errorMessage = getAuthErrorMessage(state);
+            if (errorMessage != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(errorMessage),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+
+            // Perform admin check when login is successful
+            if (state is AuthAuthenticated) {
+              _navigated = false;
+              // Perform admin check - navigation will happen in AdminCubit listener when response arrives
+              context.read<AdminCubit>().checkAdmin(state.token);
+            }
+          },
+          child: Scaffold(
+            appBar: const EmptyAppBar(),
+            body: Stack(
+              children: [
+                SingleChildScrollView(
+                  child: Form(
+                    key: _controller.formKey,
+                    child: Column(
+                      children: [
+                        AppDimensionsSpacing.verticalLarge(context),
+
+                        /// Logo
+                        Center(
+                          child: Container(
+                            width: AppDimensionsSize.logoSize(context),
+                            height: AppDimensionsSize.logoSize(context),
+                            decoration: BoxDecoration(
+                              borderRadius: AppDimensionsRadius.circularMedium(
+                                context,
+                              ),
+                              border: Border.all(color: LoginConstants.grey300),
+                              image: const DecorationImage(
+                                image: NetworkImage(
+                                  LoginConstants.loginImageHeader,
+                                ),
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                            fit: BoxFit.cover,
                           ),
                         ),
-                      ),
-                    ),
 
-                    AppDimensionsSpacing.verticalLarge(context),
+                        AppDimensionsSpacing.verticalLarge(context),
 
-                    /// Welcome text
-                    CustomWelcomeText(welcomeText: l10n.welcome, theme: theme),
+                        /// Welcome text
+                        CustomWelcomeText(
+                          welcomeText: l10n.welcome,
+                          theme: theme,
+                        ),
 
-                    AppDimensionsSpacing.verticalExtraSmall(context),
+                        AppDimensionsSpacing.verticalExtraSmall(context),
 
-                    Text(
-                      l10n.signInToYourAccountToContinue,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-
-                    AppDimensionsSpacing.verticalExtraLarge(context),
-
-                    /// Form
-                    Padding(
-                      padding: AppDimensionsPadding.symmetricHorizontalLarge(
-                        context,
-                      ),
-                      child: Column(
-                        children: [
-                          CustomLoginTextField(
-                            controller: _controller.emailController,
-                            customHintText: l10n.enterYourEmail,
-                            customIcon: Icons.email,
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (value) =>
-                                LoginValidator.validateEmail(value, context),
+                        Text(
+                          l10n.signInToYourAccountToContinue,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w400,
                           ),
-                          AppDimensionsSpacing.verticalSmall(context),
-                          CustomLoginTextField(
-                            controller: _controller.passwordController,
-                            customHintText: l10n.password,
-                            customIcon: Icons.lock,
-                            visibilityIcon: _controller.obscurePassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                            obscureText: _controller.obscurePassword,
-                            onVisibilityToggle: () {
-                              setState(() {
-                                _controller.togglePasswordVisibility();
-                              });
-                            },
-                            validator: (value) =>
-                                LoginValidator.validatePassword(value, context),
-                          ),
+                        ),
 
-                          /// Forgot password
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: Padding(
-                              padding:
-                                  AppDimensionsPadding.symmetricVerticalMedium(
-                                    context,
-                                  ),
-                              child: Text(
-                                l10n.forgotPassword,
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
+                        AppDimensionsSpacing.verticalExtraLarge(context),
+
+                        /// Form
+                        Padding(
+                          padding:
+                              AppDimensionsPadding.symmetricHorizontalLarge(
+                                context,
                               ),
-                            ),
-                          ),
-
-                          /// Login button
-                          _CustomLoginButton(
-                            controller: _controller,
-                            l10n: l10n,
-                            onLogin: () => handleLogin(
-                              context,
-                              _controller.formKey,
-                              _controller.email,
-                              _controller.password,
-                            ),
-                          ),
-
-                          AppDimensionsSpacing.verticalLarge(context),
-
-                          /// Divider
-                          Row(
+                          child: Column(
                             children: [
-                              Expanded(
-                                child: Divider(
-                                  color: LoginConstants.lightGreen,
-                                  thickness: AppDimensionsBorderWidth.thin(
-                                    context,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding:
-                                    AppDimensionsPadding.symmetricHorizontalSmall(
+                              CustomLoginTextField(
+                                controller: _controller.emailController,
+                                customHintText: l10n.enterYourEmail,
+                                customIcon: Icons.email,
+                                keyboardType: TextInputType.emailAddress,
+                                validator: (value) =>
+                                    LoginValidator.validateEmail(
+                                      value,
                                       context,
                                     ),
-                                child: Text(
-                                  l10n.orContinueWith,
-                                  style: const TextStyle(
-                                    color: LoginConstants.primaryColor,
-                                    fontWeight: FontWeight.w500,
+                              ),
+                              AppDimensionsSpacing.verticalSmall(context),
+                              CustomLoginTextField(
+                                controller: _controller.passwordController,
+                                customHintText: l10n.password,
+                                customIcon: Icons.lock,
+                                visibilityIcon: _controller.obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                obscureText: _controller.obscurePassword,
+                                onVisibilityToggle: () {
+                                  setState(() {
+                                    _controller.togglePasswordVisibility();
+                                  });
+                                },
+                                validator: (value) =>
+                                    LoginValidator.validatePassword(
+                                      value,
+                                      context,
+                                    ),
+                              ),
+
+                              /// Forgot password
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: Padding(
+                                  padding:
+                                      AppDimensionsPadding.symmetricVerticalMedium(
+                                        context,
+                                      ),
+                                  child: Text(
+                                    l10n.forgotPassword,
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                               ),
-                              Expanded(
-                                child: Divider(
-                                  color: LoginConstants.lightGreen,
-                                  thickness: AppDimensionsBorderWidth.thin(
-                                    context,
+
+                              /// Login button
+                              _CustomLoginButton(
+                                l10n: l10n,
+                                onLogin: () => handleLogin(
+                                  context,
+                                  _controller.formKey,
+                                  _controller.email,
+                                  _controller.password,
+                                ),
+                              ),
+
+                              AppDimensionsSpacing.verticalLarge(context),
+
+                              /// Divider
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Divider(
+                                      color: LoginConstants.lightGreen,
+                                      thickness: AppDimensionsBorderWidth.thin(
+                                        context,
+                                      ),
+                                    ),
                                   ),
+                                  Padding(
+                                    padding:
+                                        AppDimensionsPadding.symmetricHorizontalSmall(
+                                          context,
+                                        ),
+                                    child: Text(
+                                      l10n.orContinueWith,
+                                      style: const TextStyle(
+                                        color: LoginConstants.primaryColor,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Divider(
+                                      color: LoginConstants.lightGreen,
+                                      thickness: AppDimensionsBorderWidth.thin(
+                                        context,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        Padding(
+                          padding: AppDimensionsPadding.allMedium(context),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: SocialLoginButton(
+                                  text: l10n.google,
+                                  iconAsset: ImageConstants.imageGoogleIcon,
+                                  onPressed: () async {
+                                    final error = await handleGoogleSignIn(
+                                      context,
+                                    );
+                                    if (error != null && mounted) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(error),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ),
+                              AppDimensionsSpacing.horizontalSmall(context),
+                              Expanded(
+                                child: SocialLoginButton(
+                                  text: l10n.facebook,
+                                  iconAsset: ImageConstants.imageFacebookIcon,
+                                  onPressed: () async {
+                                    final error = await handleFacebookSignIn(
+                                      context,
+                                    );
+                                    if (error != null && mounted) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(error),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
+                                  },
                                 ),
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
-
-                    Padding(
-                      padding: AppDimensionsPadding.allMedium(context),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: SocialLoginButton(
-                              text: l10n.google,
-                              iconAsset: ImageConstants.imageGoogleIcon,
-                              onPressed: () => handleGoogleSignIn(context),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(l10n.dontHaveAnAccount),
+                            AppDimensionsSpacing.horizontalExtraSmall(context),
+                            TextButton(
+                              child: Text(
+                                l10n.signUp,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              onPressed: () => navigateToRegister(context),
                             ),
-                          ),
-                          AppDimensionsSpacing.horizontalSmall(context),
-                          Expanded(
-                            child: SocialLoginButton(
-                              text: l10n.facebook,
-                              iconAsset: ImageConstants.imageFacebookIcon,
-                              onPressed: () => handleFacebookSignIn(context),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(l10n.dontHaveAnAccount),
-                        AppDimensionsSpacing.horizontalExtraSmall(context),
-                        TextButton(
-                          child: Text(
-                            l10n.signUp,
-                            style: const TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          onPressed: () => navigateToRegister(context),
+                          ],
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                // Language selector button in top right corner
+                Positioned(
+                  top: AppDimensionsPadding.medium(context),
+                  right: AppDimensionsPadding.medium(context),
+                  child: LanguageSelector(
+                    currentLocale: currentLocale,
+                    onLocaleChanged: (locale) {
+                      appState?.changeLocale(locale);
+                    },
+                  ),
+                ),
+              ],
             ),
-            // Language selector button in top right corner
-            Positioned(
-              top: AppDimensionsPadding.medium(context),
-              right: AppDimensionsPadding.medium(context),
-              child: LanguageSelector(
-                currentLocale: currentLocale,
-                onLocaleChanged: (locale) {
-                  appState?.changeLocale(locale);
-                },
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -391,11 +512,7 @@ class SocialLoginButton extends StatelessWidget {
 }
 
 class _CustomLoginButton extends StatelessWidget {
-  const _CustomLoginButton({
-    required LoginController controller,
-    required this.l10n,
-    required this.onLogin,
-  });
+  const _CustomLoginButton({required this.l10n, required this.onLogin});
 
   final AppLocalizations? l10n;
   final VoidCallback onLogin;

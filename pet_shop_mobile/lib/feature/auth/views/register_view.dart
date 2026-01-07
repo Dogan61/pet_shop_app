@@ -10,8 +10,8 @@ import 'package:pet_shop_app/core/validation/register_validator.dart';
 import 'package:pet_shop_app/core/widgets/app_bars.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_cubit.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_state.dart';
-import 'package:pet_shop_app/feature/auth/models/auth_model.dart';
 import 'package:pet_shop_app/feature/auth/mixins/login_mixin.dart';
+import 'package:pet_shop_app/feature/auth/models/auth_model.dart';
 import 'package:pet_shop_app/l10n/app_localizations.dart';
 
 class RegisterView extends StatefulWidget {
@@ -141,7 +141,6 @@ class _RegisterViewState extends State<RegisterView> with LoginMixin {
               _CustomRegisterButton(
                 controller: _controller,
                 l10n: l10n,
-                onAuthStateChanged: (state) => handleAuthState(context, state, l10n),
               ),
               AppDimensionsSpacing.verticalMedium(context),
 
@@ -163,7 +162,17 @@ class _RegisterViewState extends State<RegisterView> with LoginMixin {
               _SocialButton(
                 text: l10n.signUpWithGoogle,
                 borderColor: LoginConstants.grey300,
-                onPressed: () => handleGoogleSignIn(context),
+                onPressed: () async {
+                  final error = await handleGoogleSignIn(context);
+                  if (error != null && mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(error),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
               ),
               AppDimensionsSpacing.verticalSmall(context),
 
@@ -172,7 +181,17 @@ class _RegisterViewState extends State<RegisterView> with LoginMixin {
                 text: l10n.signUpWithFacebook,
                 backgroundColor: LoginConstants.facebookColor,
                 textColor: LoginConstants.white,
-                onPressed: () => handleFacebookSignIn(context),
+                onPressed: () async {
+                  final error = await handleFacebookSignIn(context);
+                  if (error != null && mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(error),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
               ),
               AppDimensionsSpacing.verticalLarge(context),
 
@@ -206,18 +225,40 @@ class _CustomRegisterButton extends StatelessWidget {
   const _CustomRegisterButton({
     required RegisterController controller,
     required this.l10n,
-    required this.onAuthStateChanged,
   }) : _controller = controller;
 
   final RegisterController _controller;
   final AppLocalizations? l10n;
-  final void Function(AuthState state) onAuthStateChanged;
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
-        onAuthStateChanged(state);
+        // Show success/error messages
+        if (state is AuthRegistered) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                l10n?.registrationSuccessful ??
+                    LoginConstants.registrationSuccessfulFallback,
+              ),
+              backgroundColor: Colors.green,
+            ),
+          );
+          // Navigate to home after successful registration
+          Future.microtask(() {
+            if (context.mounted) {
+              context.go(LoginConstants.homeRoute);
+            }
+          });
+        } else if (state is AuthError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       },
       builder: (context, state) {
         final isLoading = state is AuthLoading;

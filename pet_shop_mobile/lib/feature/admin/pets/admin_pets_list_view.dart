@@ -58,16 +58,16 @@ class _AdminPetsListViewState extends State<AdminPetsListView>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
+                      Icon(
                         AdminConstants.petsIcon,
-                        size: 64,
-                        color: Colors.grey,
+                        size: AppDimensionsSize.extraLarge(context) * 2,
+                        color: AdminConstants.grey300,
                       ),
                       AppDimensionsSpacing.verticalMedium(context),
-                      const Text(
+                      Text(
                         AdminConstants.noPetsFound,
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: AppDimensionsFontSize.large(context),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -117,9 +117,9 @@ class _AdminPetsListViewState extends State<AdminPetsListView>
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: const Icon(
+                            icon: Icon(
                               AdminConstants.editIcon,
-                              color: Colors.blue,
+                              color: AdminConstants.managePetsColor,
                             ),
                             onPressed: () => navigateToEditPet(context, pet.id),
                           ),
@@ -144,16 +144,18 @@ class _AdminPetsListViewState extends State<AdminPetsListView>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.error_outline,
-                      size: 64,
-                      color: Colors.red,
+                      size: AppDimensionsSize.extraLarge(context) * 2,
+                      color: AdminConstants.red,
                     ),
                     AppDimensionsSpacing.verticalMedium(context),
                     Text(
                       state.message,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 16),
+                      style: TextStyle(
+                        fontSize: AppDimensionsFontSize.medium(context),
+                      ),
                     ),
                     AppDimensionsSpacing.verticalMedium(context),
                     ElevatedButton(

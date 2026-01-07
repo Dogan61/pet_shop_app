@@ -6,18 +6,13 @@ part 'auth_model.g.dart';
 
 @JsonSerializable()
 class AuthResponseModel extends Equatable {
-  final bool success;
-  final String? message;
-  final AuthDataModel? data;
-
-  const AuthResponseModel({
-    required this.success,
-    this.message,
-    this.data,
-  });
+  const AuthResponseModel({required this.success, this.message, this.data});
 
   factory AuthResponseModel.fromJson(Map<String, dynamic> json) =>
       _$AuthResponseModelFromJson(json);
+  final bool success;
+  final String? message;
+  final AuthDataModel? data;
 
   Map<String, dynamic> toJson() => _$AuthResponseModelToJson(this);
 
@@ -27,16 +22,12 @@ class AuthResponseModel extends Equatable {
 
 @JsonSerializable()
 class AuthDataModel extends Equatable {
-  final UserModel? user;
-  final String? token;
-
-  const AuthDataModel({
-    this.user,
-    this.token,
-  });
+  const AuthDataModel({this.user, this.token});
 
   factory AuthDataModel.fromJson(Map<String, dynamic> json) =>
       _$AuthDataModelFromJson(json);
+  final UserModel? user;
+  final String? token;
 
   Map<String, dynamic> toJson() => _$AuthDataModelToJson(this);
 
@@ -46,13 +37,9 @@ class AuthDataModel extends Equatable {
 
 @JsonSerializable()
 class LoginRequestModel extends Equatable {
+  const LoginRequestModel({required this.email, required this.password});
   final String email;
   final String password;
-
-  const LoginRequestModel({
-    required this.email,
-    required this.password,
-  });
 
   Map<String, dynamic> toJson() => _$LoginRequestModelToJson(this);
 
@@ -62,19 +49,17 @@ class LoginRequestModel extends Equatable {
 
 @JsonSerializable()
 class RegisterRequestModel extends Equatable {
-  final String fullName;
-  final String email;
-  final String password;
-
   const RegisterRequestModel({
     required this.fullName,
     required this.email,
     required this.password,
   });
+  final String fullName;
+  final String email;
+  final String password;
 
   Map<String, dynamic> toJson() => _$RegisterRequestModelToJson(this);
 
   @override
   List<Object?> get props => [fullName, email, password];
 }
-

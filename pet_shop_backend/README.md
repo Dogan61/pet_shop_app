@@ -55,7 +55,10 @@ Node.js Express.js backend API for Pet Shop mobile application with Firebase Fir
 - ✅ Category filtering
 - ✅ Favorites management
 - ✅ Admin panel support
-- ✅ Social login UI (Google & Facebook buttons - UI ready, backend integration pending)
+- ✅ Social login (Google & Facebook) - Fully integrated
+- ✅ Helper functions for code reusability
+- ✅ Consistent API response format
+- ✅ Centralized error handling
 
 ## 📦 Prerequisites
 
@@ -195,11 +198,13 @@ pet_shop_backend/
 │   │   ├── petRoutes.js         # Pet routes
 │   │   └── userRoutes.js        # User routes
 │   ├── utils/
+│   │   ├── userHelper.js        # User profile helper functions
+│   │   ├── responseHelper.js    # Standardized API responses
+│   │   ├── errorHelper.js       # Centralized error handling
 │   │   └── firestoreHelper.js   # Firestore utility functions
 │   └── app.js                   # Express app configuration
 ├── scripts/
-│   ├── seedPets.js              # Seed demo pet data
-│   └── setAdmin.js              # Set admin role for user
+│   └── seedPets.js              # Seed demo pet data
 ├── server.js                    # Server entry point
 ├── package.json                 # Dependencies and scripts
 ├── .env                         # Environment variables (gitignored)
@@ -240,10 +245,15 @@ pet_shop_backend/
   - Requires: `Authorization: Bearer <token>`
 
 #### Social Authentication
-- **Google Login** - UI ready, backend integration pending
-- **Facebook Login** - UI ready, backend integration pending
+- `POST /api/auth/google` - Google login
+  - Body: `{ "idToken": "google-id-token" }`
+  - Returns: User data and Firebase token
 
-**Note:** Social login buttons are present in the mobile app UI, but backend endpoints are not yet implemented. Currently only email/password authentication is fully functional.
+- `POST /api/auth/facebook` - Facebook login
+  - Body: `{ "accessToken": "facebook-access-token" }`
+  - Returns: User data and Firebase token
+
+**Note:** Social login is fully functional. Users can authenticate with Google or Facebook accounts.
 
 ### Pets
 - `GET /api/pets` - Get all pets (with pagination)
@@ -283,9 +293,10 @@ pet_shop_backend/
   - Requires: `Authorization: Bearer <token>`
 
 ### Admin
-- `POST /api/admin/set-admin` - Set user as admin (Protected - Admin)
-  - Body: `{ "email": "user@example.com" }`
-  - Requires: `Authorization: Bearer <admin-token>`
+- `GET /api/admin/check` - Check if current user is admin (Protected)
+  - Returns: `{ "success": true, "isAdmin": true/false, "data": {...} }`
+  - Requires: `Authorization: Bearer <token>`
+  - Note: Admin role is set manually via Firestore (users collection → isAdmin: true)
 
 ## 🔥 Firebase Setup
 
@@ -305,8 +316,21 @@ npm start            # Start production server
 
 ### Utilities
 ```bash
-npm run set-admin    # Set admin role for a user
 npm run seed:pets    # Seed demo pet data to Firestore
+```
+
+### Admin Setup
+Admin role is set manually via Firestore:
+1. Go to Firebase Console → Firestore Database → `users` collection
+2. Find the user document (by UID) you want to make admin
+3. Click on the document → Add field
+4. Field name: `isAdmin`
+5. Field type: `boolean`
+6. Field value: `true`
+7. Save the document
+8. User must sign out and sign in again for changes to take effect
+
+**Note:** Only one admin is supported. The admin can manage pets via the admin dashboard.
 ```
 
 ### Testing
@@ -323,6 +347,8 @@ npm test             # Run tests (when implemented)
 - **Role-based Access Control** - Admin/User role separation
 - **Input Validation** - express-validator for request validation
 - **Error Handling** - Centralized error handling middleware
+- **Consistent Error Messages** - User-friendly error responses
+- **Response Standardization** - Uniform API response format
 
 ## 🧪 Testing
 
@@ -355,6 +381,32 @@ Import `Pet_Shop_API.postman_collection.json` into Postman for API testing.
   "error": "ERROR_CODE"
 }
 ```
+
+### Helper Functions
+
+Backend'de kod tekrarını önlemek ve tutarlılık sağlamak için helper functions kullanılır:
+
+- **responseHelper.js**: Standart API response formatları
+  - `sendSuccess()` - Başarılı response
+  - `sendError()` - Hata response
+  - `sendValidationError()` - Validation hatası
+  - `sendUnauthorized()` - Yetkisiz erişim
+  - `sendForbidden()` - Yasak erişim
+  - `sendNotFound()` - Bulunamadı
+  - `sendServerError()` - Sunucu hatası
+
+- **errorHelper.js**: Merkezi error handling
+  - `handleFirebaseAuthError()` - Firebase Auth hataları
+  - `handleFirebaseRestApiError()` - Firebase REST API hataları
+  - `handleControllerError()` - Controller seviyesi hatalar
+
+- **userHelper.js**: User profile yönetimi
+  - `createUserProfileData()` - Yeni user profile oluşturma
+  - `createOrUpdateUserProfile()` - User profile güncelleme
+
+- **firestoreHelper.js**: Firestore utility functions
+  - `convertTimestamps()` - Timestamp dönüşümleri
+  - `timestampToISO()` - Timestamp to ISO string
 
 ## 🐛 Troubleshooting
 

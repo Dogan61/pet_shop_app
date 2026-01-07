@@ -11,6 +11,7 @@ import 'package:pet_shop_app/feature/auth/bloc/auth_cubit.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_state.dart';
 import 'package:pet_shop_app/feature/favorite/bloc/favorite_cubit.dart';
 import 'package:pet_shop_app/feature/favorite/bloc/favorite_state.dart';
+import 'package:pet_shop_app/feature/favorite/controllers/favorites_controller.dart';
 import 'package:pet_shop_app/feature/favorite/models/favorite_model.dart';
 import 'package:pet_shop_app/feature/favorite/widgets/favorites_card.dart';
 import 'package:pet_shop_app/l10n/app_localizations.dart';
@@ -23,8 +24,20 @@ class FavoritesView extends StatefulWidget {
 }
 
 class _FavoritesViewState extends State<FavoritesView> {
+  late final FavoritesController _controller;
   int _currentIndex = 1; // Favorites index
-  bool _hasLoadedFavorites = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = FavoritesController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   void Function(int) _onBottomNavTap(BuildContext context) {
     return BottomNavigationItems.createRouteHandler(
@@ -57,13 +70,13 @@ class _FavoritesViewState extends State<FavoritesView> {
               : null;
 
           // Load favorites once when authenticated
-          if (isAuthenticated && token != null && !_hasLoadedFavorites) {
+          if (isAuthenticated &&
+              token != null &&
+              !_controller.hasLoadedFavorites) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (mounted) {
                 context.read<FavoriteCubit>().getFavorites(token);
-                setState(() {
-                  _hasLoadedFavorites = true;
-                });
+                _controller.markFavoritesLoaded();
               }
             });
           }

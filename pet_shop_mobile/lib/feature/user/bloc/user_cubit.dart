@@ -4,9 +4,8 @@ import 'package:pet_shop_app/feature/auth/models/user_model.dart';
 import 'package:pet_shop_app/feature/user/bloc/user_state.dart';
 
 class UserCubit extends Cubit<UserState> {
-  final UserRepository repository;
-
   UserCubit({required this.repository}) : super(const UserInitial());
+  final UserRepository repository;
 
   Future<void> getProfile(String token) async {
     emit(const UserLoading());
@@ -31,11 +30,12 @@ class UserCubit extends Cubit<UserState> {
       if (response.success && response.data != null) {
         emit(UserUpdated(user: response.data!));
       } else {
-        emit(UserError(message: response.message ?? 'Failed to update profile'));
+        emit(
+          UserError(message: response.message ?? 'Failed to update profile'),
+        );
       }
     } catch (e) {
       emit(UserError(message: e.toString()));
     }
   }
 }
-

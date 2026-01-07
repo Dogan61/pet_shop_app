@@ -12,9 +12,10 @@ import 'package:pet_shop_app/core/router/bottom_navigation_items.dart';
 import 'package:pet_shop_app/core/widgets/app_bars.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_cubit.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_state.dart';
+import 'package:pet_shop_app/feature/auth/views/login_view.dart';
 import 'package:pet_shop_app/feature/favorite/bloc/favorite_cubit.dart';
 import 'package:pet_shop_app/feature/favorite/bloc/favorite_state.dart';
-import 'package:pet_shop_app/feature/auth/views/login_view.dart';
+import 'package:pet_shop_app/feature/home/controllers/home_controller.dart';
 import 'package:pet_shop_app/feature/pet/bloc/pet_cubit.dart';
 import 'package:pet_shop_app/feature/pet/bloc/pet_state.dart';
 import 'package:pet_shop_app/feature/pet/models/pet_model.dart';
@@ -28,9 +29,20 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  PetCategory _selectedCategory = PetCategory.all;
+  late final HomeController _controller;
   int _currentIndex = 0;
-  bool _hasLoadedFavorites = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = HomeController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   void Function(int) _onBottomNavTap(BuildContext context) {
     return BottomNavigationItems.createRouteHandler(
@@ -56,13 +68,12 @@ class _HomeViewState extends State<HomeView> {
       child: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, authState) {
           // Load favorites once when authenticated
-          if (authState is AuthAuthenticated && !_hasLoadedFavorites) {
+          if (authState is AuthAuthenticated &&
+              !_controller.hasLoadedFavorites) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (mounted) {
                 context.read<FavoriteCubit>().getFavorites(authState.token);
-                setState(() {
-                  _hasLoadedFavorites = true;
-                });
+                _controller.markFavoritesLoaded();
               }
             });
           }
@@ -144,11 +155,16 @@ class _HomeViewState extends State<HomeView> {
                       ],
                     ),
                     Expanded(
-                      child: HomeCustomGrid(
-                        selectedCategory: _selectedCategory,
-                        token: authState is AuthAuthenticated
-                            ? authState.token
-                            : null,
+                      child: ListenableBuilder(
+                        listenable: _controller,
+                        builder: (context, _) {
+                          return HomeCustomGrid(
+                            selectedCategory: _controller.selectedCategory,
+                            token: authState is AuthAuthenticated
+                                ? authState.token
+                                : null,
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -174,79 +190,60 @@ class _HomeViewState extends State<HomeView> {
     if (l10n == null) {
       return const SizedBox.shrink();
     }
-    return SizedBox(
-      height: AppDimensionsSize.filterSectionHeight(context),
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.zero,
-        children: [
-          _CategoryFilterButton(
-            label: l10n.all,
-            category: PetCategory.all,
-            isSelected: _selectedCategory == PetCategory.all,
-            onTap: () {
-              setState(() {
-                _selectedCategory = PetCategory.all;
-              });
-            },
+    return ListenableBuilder(
+      listenable: _controller,
+      builder: (context, _) {
+        return SizedBox(
+          height: AppDimensionsSize.filterSectionHeight(context),
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.zero,
+            children: [
+              _CategoryFilterButton(
+                label: l10n.all,
+                category: PetCategory.all,
+                isSelected: _controller.selectedCategory == PetCategory.all,
+                onTap: () => _controller.setCategory(PetCategory.all),
+              ),
+              AppDimensionsSpacing.horizontalSmall(context),
+              _CategoryFilterButton(
+                label: l10n.dogs,
+                category: PetCategory.dogs,
+                isSelected: _controller.selectedCategory == PetCategory.dogs,
+                onTap: () => _controller.setCategory(PetCategory.dogs),
+              ),
+              AppDimensionsSpacing.horizontalSmall(context),
+              _CategoryFilterButton(
+                label: l10n.cats,
+                category: PetCategory.cats,
+                isSelected: _controller.selectedCategory == PetCategory.cats,
+                onTap: () => _controller.setCategory(PetCategory.cats),
+              ),
+              AppDimensionsSpacing.horizontalSmall(context),
+              _CategoryFilterButton(
+                label: l10n.birds,
+                category: PetCategory.birds,
+                isSelected: _controller.selectedCategory == PetCategory.birds,
+                onTap: () => _controller.setCategory(PetCategory.birds),
+              ),
+              AppDimensionsSpacing.horizontalSmall(context),
+              _CategoryFilterButton(
+                label: l10n.rabbits,
+                category: PetCategory.rabbits,
+                isSelected: _controller.selectedCategory == PetCategory.rabbits,
+                onTap: () => _controller.setCategory(PetCategory.rabbits),
+              ),
+              AppDimensionsSpacing.horizontalSmall(context),
+              _CategoryFilterButton(
+                label: l10n.fish,
+                category: PetCategory.fish,
+                isSelected: _controller.selectedCategory == PetCategory.fish,
+                onTap: () => _controller.setCategory(PetCategory.fish),
+              ),
+            ],
           ),
-          AppDimensionsSpacing.horizontalSmall(context),
-          _CategoryFilterButton(
-            label: l10n.dogs,
-            category: PetCategory.dogs,
-            isSelected: _selectedCategory == PetCategory.dogs,
-            onTap: () {
-              setState(() {
-                _selectedCategory = PetCategory.dogs;
-              });
-            },
-          ),
-          AppDimensionsSpacing.horizontalSmall(context),
-          _CategoryFilterButton(
-            label: l10n.cats,
-            category: PetCategory.cats,
-            isSelected: _selectedCategory == PetCategory.cats,
-            onTap: () {
-              setState(() {
-                _selectedCategory = PetCategory.cats;
-              });
-            },
-          ),
-          AppDimensionsSpacing.horizontalSmall(context),
-          _CategoryFilterButton(
-            label: l10n.birds,
-            category: PetCategory.birds,
-            isSelected: _selectedCategory == PetCategory.birds,
-            onTap: () {
-              setState(() {
-                _selectedCategory = PetCategory.birds;
-              });
-            },
-          ),
-          AppDimensionsSpacing.horizontalSmall(context),
-          _CategoryFilterButton(
-            label: l10n.rabbits,
-            category: PetCategory.rabbits,
-            isSelected: _selectedCategory == PetCategory.rabbits,
-            onTap: () {
-              setState(() {
-                _selectedCategory = PetCategory.rabbits;
-              });
-            },
-          ),
-          AppDimensionsSpacing.horizontalSmall(context),
-          _CategoryFilterButton(
-            label: l10n.fish,
-            category: PetCategory.fish,
-            isSelected: _selectedCategory == PetCategory.fish,
-            onTap: () {
-              setState(() {
-                _selectedCategory = PetCategory.fish;
-              });
-            },
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
