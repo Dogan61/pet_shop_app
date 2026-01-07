@@ -284,17 +284,14 @@ cd pet_shop_backend
 npm test
 ```
 
-## 📝 Lisans
-
-Bu proje eğitim ve portfolyo amaçlı geliştirilmiştir.
 
 ## 👨‍💻 Geliştirici
 
 **Dogan Senturk**
 
-- Portfolio: [GitHub Profil](https://github.com/yourusername)
-- LinkedIn: [LinkedIn Profil](https://linkedin.com/in/yourusername)
-- Email: your.email@example.com
+- Portfolio: [GitHub Profil](https://github.com/Dogan61)
+- LinkedIn: [LinkedIn Profil](https://www.linkedin.com/in/dogan-senturk/)
+- Email: dogansenturk51@gmail.com
 
 ## 🙏 Teşekkürler
 
