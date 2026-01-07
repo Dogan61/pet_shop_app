@@ -17,53 +17,48 @@ class PetLoading extends PetState {
 }
 
 class PetLoaded extends PetState {
-  final List<PetModel> pets;
-  final int? totalCount;
-  final int? currentPage;
-  final int? totalPages;
-
   const PetLoaded({
     required this.pets,
     this.totalCount,
     this.currentPage,
     this.totalPages,
   });
+  final List<PetModel> pets;
+  final int? totalCount;
+  final int? currentPage;
+  final int? totalPages;
 
   @override
   List<Object?> get props => [pets, totalCount, currentPage, totalPages];
 }
 
 class PetDetailLoaded extends PetState {
-  final PetModel pet;
-
   const PetDetailLoaded({required this.pet});
+  final PetModel pet;
 
   @override
   List<Object?> get props => [pet];
 }
 
 class PetError extends PetState {
-  final String message;
-
   const PetError({required this.message});
+  final String message;
 
   @override
   List<Object?> get props => [message];
 }
 
 class PetCreated extends PetState {
-  final PetModel pet;
-
   const PetCreated({required this.pet});
+  final PetModel pet;
 
   @override
   List<Object?> get props => [pet];
 }
 
 class PetUpdated extends PetState {
-  final PetModel pet;
-
   const PetUpdated({required this.pet});
+  final PetModel pet;
 
   @override
   List<Object?> get props => [pet];
@@ -72,4 +67,3 @@ class PetUpdated extends PetState {
 class PetDeleted extends PetState {
   const PetDeleted();
 }
-

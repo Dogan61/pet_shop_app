@@ -20,7 +20,7 @@ class ProfileView extends StatefulWidget {
 
 class _ProfileViewState extends State<ProfileView> with ProfileMixin {
   late final ProfileController _controller;
-  int _currentIndex = 2; 
+  int _currentIndex = 2;
 
   @override
   void initState() {
@@ -55,132 +55,150 @@ class _ProfileViewState extends State<ProfileView> with ProfileMixin {
       value: context.read<AuthCubit>(),
       child: BlocListener<AuthCubit, AuthState>(
         listener: handleAuthState,
-        child: Scaffold(
-          backgroundColor: ProfileConstants.backgroundColor,
-          appBar: AppBar(
-            toolbarHeight: 0,
-          ),
-          body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(
-          horizontal: AppDimensionsPadding.large(context),
-          vertical: AppDimensionsPadding.large(context) * 1.2,
-        ),
-        child: Column(
-          children: [
-            _buildProfileHeader(context, l10n),
-            SizedBox(height: AppDimensionsSpacing.large(context) * 1.5),
-            _buildSectionHeader(l10n.personalInformation),
-            SizedBox(height: AppDimensionsSpacing.small(context)),
-            _buildInfoCard(
-              context,
-              Icons.person_outline,
-              l10n.fullName,
-              ProfileConstants.defaultUserName,
-            ),
-            _buildInfoCard(
-              context,
-              Icons.mail_outline,
-              l10n.email,
-              ProfileConstants.defaultEmail,
-            ),
-            _buildInfoCard(
-              context,
-              Icons.call_outlined,
-              l10n.phone,
-              ProfileConstants.defaultPhone,
-            ),
-            _buildInfoCard(
-              context,
-              Icons.location_on_outlined,
-              l10n.address,
-              ProfileConstants.defaultAddress,
-              isLongText: true,
-            ),
-            SizedBox(height: AppDimensionsSpacing.large(context) * 1.5),
-            _buildSectionHeader(l10n.appSettings),
-            SizedBox(height: AppDimensionsSpacing.small(context)),
-            ListenableBuilder(
-              listenable: _controller,
-              builder: (context, _) {
-                return _buildSettingToggle(
-                  context,
-                  Icons.notifications_none,
-                  l10n.notifications,
-                  _controller.notificationsEnabled,
-                );
-              },
-            ),
-            _buildSettingItem(
-              context,
-              Icons.shopping_bag_outlined,
-              l10n.myOrders,
-              onTap: () => handleSettingItemTap(context, 'myOrders'),
-            ),
-            _buildSettingItem(
-              context,
-              Icons.security_outlined,
-              l10n.privacyPolicy,
-              onTap: () => handleSettingItemTap(context, 'privacyPolicy'),
-            ),
-            _buildSettingItem(
-              context,
-              Icons.credit_card_outlined,
-              l10n.paymentMethods,
-              onTap: () => handleSettingItemTap(context, 'paymentMethods'),
-            ),
-            SizedBox(height: AppDimensionsSpacing.extraLarge(context)),
-            _buildLogoutButton(context, l10n),
-            SizedBox(height: AppDimensionsSpacing.large(context)),
-            Text(
-              '${ProfileConstants.appVersion} • ${ProfileConstants.appCompany}',
-              style: TextStyle(
-                fontSize: AppDimensionsFontSize.extraSmall(context),
-                color: ProfileConstants.textMuted,
-                fontWeight: FontWeight.w500,
+        child: BlocBuilder<AuthCubit, AuthState>(
+          builder: (context, authState) {
+            // Get user data from AuthState
+            final user = authState is AuthAuthenticated
+                ? authState.user
+                : authState is AuthRegistered
+                ? authState.user
+                : null;
+
+            // Use user data if available, otherwise use empty string
+            final userName = user?.fullName ?? '';
+            final userEmail = user?.email ?? '';
+            final userPhone = user?.phone?.isNotEmpty ?? false
+                ? user!.phone!
+                : '';
+            final userAddress = user?.address?.isNotEmpty ?? false
+                ? user!.address!
+                : '';
+
+            return Scaffold(
+              backgroundColor: ProfileConstants.backgroundColor,
+              appBar: AppBar(toolbarHeight: 0),
+              body: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppDimensionsPadding.large(context),
+                  vertical: AppDimensionsPadding.large(context) * 1.2,
+                ),
+                child: Column(
+                  children: [
+                    _buildProfileHeader(
+                      context,
+                      l10n,
+                      userName: userName,
+                      userEmail: userEmail,
+                    ),
+                    SizedBox(height: AppDimensionsSpacing.large(context) * 1.5),
+                    _buildSectionHeader(l10n.personalInformation),
+                    SizedBox(height: AppDimensionsSpacing.small(context)),
+                    _buildInfoCard(
+                      context,
+                      Icons.person_outline,
+                      l10n.fullName,
+                      userName,
+                    ),
+                    _buildInfoCard(
+                      context,
+                      Icons.mail_outline,
+                      l10n.email,
+                      userEmail,
+                    ),
+                    _buildInfoCard(
+                      context,
+                      Icons.call_outlined,
+                      l10n.phone,
+                      userPhone,
+                    ),
+                    _buildInfoCard(
+                      context,
+                      Icons.location_on_outlined,
+                      l10n.address,
+                      userAddress,
+                      isLongText: true,
+                    ),
+                    SizedBox(height: AppDimensionsSpacing.large(context) * 1.5),
+                    _buildSectionHeader(l10n.appSettings),
+                    SizedBox(height: AppDimensionsSpacing.small(context)),
+                    ListenableBuilder(
+                      listenable: _controller,
+                      builder: (context, _) {
+                        return _buildSettingToggle(
+                          context,
+                          Icons.notifications_none,
+                          l10n.notifications,
+                          _controller.notificationsEnabled,
+                        );
+                      },
+                    ),
+                    _buildSettingItem(
+                      context,
+                      Icons.shopping_bag_outlined,
+                      l10n.myOrders,
+                      onTap: () => handleSettingItemTap(context, 'myOrders'),
+                    ),
+                    _buildSettingItem(
+                      context,
+                      Icons.security_outlined,
+                      l10n.privacyPolicy,
+                      onTap: () =>
+                          handleSettingItemTap(context, 'privacyPolicy'),
+                    ),
+                    _buildSettingItem(
+                      context,
+                      Icons.credit_card_outlined,
+                      l10n.paymentMethods,
+                      onTap: () =>
+                          handleSettingItemTap(context, 'paymentMethods'),
+                    ),
+                    SizedBox(height: AppDimensionsSpacing.extraLarge(context)),
+                    _buildLogoutButton(context, l10n),
+                    SizedBox(height: AppDimensionsSpacing.large(context)),
+                    Text(
+                      '${ProfileConstants.appVersion} • ${ProfileConstants.appCompany}',
+                      style: TextStyle(
+                        fontSize: AppDimensionsFontSize.extraSmall(context),
+                        color: ProfileConstants.textMuted,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(height: AppDimensionsSpacing.medium(context)),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: AppDimensionsSpacing.medium(context)),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _currentIndex,
-        onTap: _onBottomNavTap(context),
-        selectedItemColor: HomeConstants.primaryColor,
-        unselectedItemColor: HomeConstants.grey,
-        items: BottomNavigationItems.getItems(),
-      ),
+              bottomNavigationBar: BottomNavigationBar(
+                type: BottomNavigationBarType.fixed,
+                currentIndex: _currentIndex,
+                onTap: _onBottomNavTap(context),
+                selectedItemColor: HomeConstants.primaryColor,
+                unselectedItemColor: HomeConstants.grey,
+                items: BottomNavigationItems.getItems(),
+              ),
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildProfileHeader(BuildContext context, AppLocalizations l10n) {
+  Widget _buildProfileHeader(
+    BuildContext context,
+    AppLocalizations l10n, {
+    required String userName,
+    required String userEmail,
+  }) {
     return Column(
       children: [
         Stack(
           children: [
-            Container(
-              width: AppDimensionsSize.extraLarge(context) * 1.5,
-              height: AppDimensionsSize.extraLarge(context) * 1.5,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: ProfileConstants.surfaceColor,
-                  width: 4,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  )
-                ],
-                image: const DecorationImage(
-                  image: NetworkImage(ProfileConstants.defaultAvatarUrl),
-                  fit: BoxFit.cover,
-                ),
+            CircleAvatar(
+              radius: AppDimensionsSize.extraLarge(context) * 0.75,
+              backgroundColor: ProfileConstants.surfaceColor,
+              child: Icon(
+                Icons.person,
+                size: AppDimensionsSize.extraLarge(context),
+                color: ProfileConstants.textMuted,
               ),
             ),
             Positioned(
@@ -207,7 +225,7 @@ class _ProfileViewState extends State<ProfileView> with ProfileMixin {
         ),
         SizedBox(height: AppDimensionsSpacing.medium(context)),
         Text(
-          ProfileConstants.defaultUserName,
+          userName,
           style: TextStyle(
             fontSize: AppDimensionsFontSize.extraLarge(context) * 1.2,
             fontWeight: FontWeight.w800,
@@ -215,7 +233,7 @@ class _ProfileViewState extends State<ProfileView> with ProfileMixin {
           ),
         ),
         Text(
-          ProfileConstants.defaultEmail,
+          userEmail,
           style: TextStyle(
             fontSize: AppDimensionsFontSize.medium(context),
             color: ProfileConstants.textMuted,
@@ -285,13 +303,12 @@ class _ProfileViewState extends State<ProfileView> with ProfileMixin {
       decoration: BoxDecoration(
         color: ProfileConstants.surfaceColor,
         borderRadius: AppDimensionsRadius.circularMedium(context),
-        border: Border.all(
-          color: Colors.black.withOpacity(0.05),
-        ),
+        border: Border.all(color: Colors.black.withOpacity(0.05)),
       ),
       child: Row(
-        crossAxisAlignment:
-            isLongText ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+        crossAxisAlignment: isLongText
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.center,
         children: [
           Container(
             padding: EdgeInsets.all(AppDimensionsPadding.small(context)),
@@ -319,7 +336,8 @@ class _ProfileViewState extends State<ProfileView> with ProfileMixin {
                   ),
                 ),
                 SizedBox(
-                    height: AppDimensionsSpacing.extraSmall(context) * 0.3),
+                  height: AppDimensionsSpacing.extraSmall(context) * 0.3,
+                ),
                 Text(
                   value,
                   style: TextStyle(
@@ -347,9 +365,7 @@ class _ProfileViewState extends State<ProfileView> with ProfileMixin {
       decoration: BoxDecoration(
         color: ProfileConstants.surfaceColor,
         borderRadius: AppDimensionsRadius.circularMedium(context),
-        border: Border.all(
-          color: Colors.black.withOpacity(0.05),
-        ),
+        border: Border.all(color: Colors.black.withOpacity(0.05)),
       ),
       child: ListTile(
         leading: Container(
@@ -372,10 +388,7 @@ class _ProfileViewState extends State<ProfileView> with ProfileMixin {
             color: ProfileConstants.textDark,
           ),
         ),
-        trailing: const Icon(
-          Icons.chevron_right,
-          color: Colors.grey,
-        ),
+        trailing: const Icon(Icons.chevron_right, color: Colors.grey),
         onTap: onTap ?? () {},
         shape: RoundedRectangleBorder(
           borderRadius: AppDimensionsRadius.circularMedium(context),
@@ -399,9 +412,7 @@ class _ProfileViewState extends State<ProfileView> with ProfileMixin {
       decoration: BoxDecoration(
         color: ProfileConstants.surfaceColor,
         borderRadius: AppDimensionsRadius.circularMedium(context),
-        border: Border.all(
-          color: Colors.black.withOpacity(0.05),
-        ),
+        border: Border.all(color: Colors.black.withOpacity(0.05)),
       ),
       child: Row(
         children: [
@@ -446,14 +457,42 @@ class _ProfileViewState extends State<ProfileView> with ProfileMixin {
       width: double.infinity,
       child: OutlinedButton.icon(
         onPressed: () {
-          handleLogout(context, l10n);
+          // Show confirmation dialog
+          showDialog<void>(
+            context: context,
+            builder: (BuildContext dialogContext) {
+              return AlertDialog(
+                title: Text(l10n.logout),
+                content: Text(l10n.logoutConfirmation),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                    },
+                    child: Text(l10n.cancel),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                      performLogout(context);
+                    },
+                    child: Text(
+                      l10n.logout,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
         },
         icon: const Icon(Icons.logout),
         label: Text(l10n.logout),
         style: OutlinedButton.styleFrom(
           foregroundColor: ProfileConstants.logoutButtonColor,
-          side:
-              const BorderSide(color: ProfileConstants.logoutButtonBorderColor),
+          side: const BorderSide(
+            color: ProfileConstants.logoutButtonBorderColor,
+          ),
           backgroundColor: ProfileConstants.surfaceColor,
           padding: AppDimensionsPadding.allMedium(context),
           shape: RoundedRectangleBorder(

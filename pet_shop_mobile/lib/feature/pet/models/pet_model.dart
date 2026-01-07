@@ -5,6 +5,28 @@ part 'pet_model.g.dart';
 
 @JsonSerializable()
 class PetModel extends Equatable {
+  const PetModel({
+    required this.id,
+    required this.name,
+    required this.breed,
+    required this.age,
+    required this.gender,
+    required this.weight,
+    required this.color,
+    required this.location,
+    required this.distance,
+    required this.price,
+    required this.imageUrl,
+    required this.description,
+    required this.category,
+    this.owner,
+    this.healthStatus,
+    this.createdAt,
+    this.updatedAt,
+  });
+
+  factory PetModel.fromJson(Map<String, dynamic> json) =>
+      _$PetModelFromJson(json);
   final String id;
   final String name;
   final String breed;
@@ -26,49 +48,27 @@ class PetModel extends Equatable {
   @JsonKey(name: 'updatedAt', fromJson: _dateTimeFromJson)
   final DateTime? updatedAt;
 
-  const PetModel({
-    required this.id,
-    required this.name,
-    required this.breed,
-    required this.age,
-    required this.gender,
-    required this.weight,
-    required this.color,
-    required this.location,
-    required this.distance,
-    required this.price,
-    required this.imageUrl,
-    required this.description,
-    required this.category,
-    this.owner,
-    this.healthStatus,
-    this.createdAt,
-    this.updatedAt,
-  });
-
-  factory PetModel.fromJson(Map<String, dynamic> json) => _$PetModelFromJson(json);
-
   Map<String, dynamic> toJson() => _$PetModelToJson(this);
 
   /// Helper function to safely convert price from JSON
   /// Handles both string and numeric values
   static double _priceFromJson(dynamic value) {
-    if (value == null) return 0.0;
+    if (value == null) return 0;
     if (value is num) return value.toDouble();
     if (value is String) {
       return double.tryParse(value) ?? 0.0;
     }
-    return 0.0;
+    return 0;
   }
 
   /// Helper function to safely convert DateTime from JSON
   /// Handles ISO strings, Firestore timestamp objects, and null values
   static DateTime? _dateTimeFromJson(dynamic value) {
     if (value == null) return null;
-    
+
     // If it's already a DateTime, return it
     if (value is DateTime) return value;
-    
+
     // If it's a string (ISO format), parse it
     if (value is String) {
       try {
@@ -77,7 +77,7 @@ class PetModel extends Equatable {
         return null;
       }
     }
-    
+
     // If it's a Firestore timestamp object with _seconds
     if (value is Map<String, dynamic>) {
       if (value.containsKey('_seconds')) {
@@ -93,7 +93,7 @@ class PetModel extends Equatable {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -139,38 +139,34 @@ class PetModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        breed,
-        age,
-        gender,
-        weight,
-        color,
-        location,
-        distance,
-        price,
-        imageUrl,
-        description,
-        category,
-        owner,
-        healthStatus,
-        createdAt,
-        updatedAt,
-      ];
+    id,
+    name,
+    breed,
+    age,
+    gender,
+    weight,
+    color,
+    location,
+    distance,
+    price,
+    imageUrl,
+    description,
+    category,
+    owner,
+    healthStatus,
+    createdAt,
+    updatedAt,
+  ];
 }
 
 @JsonSerializable()
 class PetOwnerModel extends Equatable {
-  final String name;
-  final String? imageUrl;
-
-  const PetOwnerModel({
-    required this.name,
-    this.imageUrl,
-  });
+  const PetOwnerModel({required this.name, this.imageUrl});
 
   factory PetOwnerModel.fromJson(Map<String, dynamic> json) =>
       _$PetOwnerModelFromJson(json);
+  final String name;
+  final String? imageUrl;
 
   Map<String, dynamic> toJson() => _$PetOwnerModelToJson(this);
 
@@ -180,10 +176,6 @@ class PetOwnerModel extends Equatable {
 
 @JsonSerializable()
 class PetHealthStatusModel extends Equatable {
-  final bool vaccines;
-  final bool neutered;
-  final bool healthRecord;
-
   const PetHealthStatusModel({
     required this.vaccines,
     required this.neutered,
@@ -192,10 +184,12 @@ class PetHealthStatusModel extends Equatable {
 
   factory PetHealthStatusModel.fromJson(Map<String, dynamic> json) =>
       _$PetHealthStatusModelFromJson(json);
+  final bool vaccines;
+  final bool neutered;
+  final bool healthRecord;
 
   Map<String, dynamic> toJson() => _$PetHealthStatusModelToJson(this);
 
   @override
   List<Object?> get props => [vaccines, neutered, healthRecord];
 }
-

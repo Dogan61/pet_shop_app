@@ -58,9 +58,9 @@ class _AdminDashboardViewState extends State<AdminDashboardView>
                         padding: AppDimensionsPadding.allLarge(context),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               AdminConstants.dashboardIcon,
-                              size: 48,
+                              size: AppDimensionsSize.extraLarge(context),
                               color: AdminConstants.primaryColor,
                             ),
                             AppDimensionsSpacing.horizontalMedium(context),
@@ -205,13 +205,17 @@ class _AdminActionCard extends StatelessWidget {
       elevation: 2,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppDimensionsRadius.circularMedium(context),
         child: Padding(
           padding: AppDimensionsPadding.allMedium(context),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 48, color: color),
+              Icon(
+                icon,
+                size: AppDimensionsSize.extraLarge(context),
+                color: color,
+              ),
               AppDimensionsSpacing.verticalSmall(context),
               Text(
                 title,

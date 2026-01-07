@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:pet_shop_app/core/constants/admin_constants.dart';
 import 'package:pet_shop_app/core/models/pet_category.dart';
-import 'package:pet_shop_app/feature/auth/bloc/auth_cubit.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_state.dart';
-import 'package:pet_shop_app/feature/pet/bloc/pet_cubit.dart';
 import 'package:pet_shop_app/feature/pet/bloc/pet_state.dart';
 import 'package:pet_shop_app/feature/pet/models/pet_model.dart';
 
@@ -95,57 +91,53 @@ class AdminPetFormController {
     );
   }
 
-  /// Validate and submit form
-  void submitForm(BuildContext context) {
-    if (!formKey.currentState!.validate()) {
-      return;
-    }
-
-    final authState = context.read<AuthCubit>().state;
-    if (authState is! AuthAuthenticated) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(AdminConstants.accessDenied),
-          backgroundColor: AdminConstants.red,
-        ),
-      );
-      return;
-    }
-
-    final pet = buildPetModel();
-    final petCubit = context.read<PetCubit>();
-
-    if (isEdit) {
-      petCubit.updatePet(petId!, pet, authState.token);
-    } else {
-      petCubit.createPet(pet, authState.token);
-    }
+  /// Validate form
+  bool validateForm() {
+    return formKey.currentState?.validate() ?? false;
   }
 
-  /// Handle pet state changes
-  void handlePetState(BuildContext context, PetState state) {
-    if (state is PetDetailLoaded && isEdit) {
-      loadPetData(state.pet);
-    } else if (state is PetCreated || state is PetUpdated) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            isEdit
-                ? AdminConstants.petUpdatedSuccess
-                : AdminConstants.petCreatedSuccess,
-          ),
-          backgroundColor: Colors.green,
-        ),
-      );
-      context.go(AdminConstants.adminPetsRoute);
-    } else if (state is PetError) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(state.message),
-          backgroundColor: Colors.red,
-        ),
-      );
+  /// Get success message for pet state
+  String? getSuccessMessage(PetState state) {
+    if (state is PetCreated) {
+      return AdminConstants.petCreatedSuccess;
+    } else if (state is PetUpdated) {
+      return AdminConstants.petUpdatedSuccess;
     }
+    return null;
+  }
+
+  /// Get error message for pet state
+  String? getErrorMessage(PetState state) {
+    if (state is PetError) {
+      return state.message;
+    }
+    return null;
+  }
+
+  /// Check if should load pet data
+  bool shouldLoadPetData(PetState state) {
+    return state is PetDetailLoaded && isEdit;
+  }
+
+  /// Get pet data from state
+  PetModel? getPetFromState(PetState state) {
+    if (state is PetDetailLoaded) {
+      return state.pet;
+    }
+    return null;
+  }
+
+  /// Check if user is authenticated
+  bool isUserAuthenticated(AuthState authState) {
+    return authState is AuthAuthenticated;
+  }
+
+  /// Get auth token
+  String? getAuthToken(AuthState authState) {
+    if (authState is AuthAuthenticated) {
+      return authState.token;
+    }
+    return null;
   }
 
   /// Validation methods
@@ -179,4 +171,3 @@ class AdminPetFormController {
     ownerImageController.dispose();
   }
 }
-

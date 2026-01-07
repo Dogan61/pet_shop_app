@@ -40,9 +40,9 @@ mixin AdminPetsListMixin<T extends StatefulWidget> on State<T> {
   void handlePetState(BuildContext context, PetState state) {
     if (state is PetDeleted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(AdminConstants.petDeletedSuccess),
-          backgroundColor: Colors.green,
+        SnackBar(
+          content: const Text(AdminConstants.petDeletedSuccess),
+          backgroundColor: AdminConstants.addPetColor,
         ),
       );
       // Reload pets
@@ -52,7 +52,10 @@ mixin AdminPetsListMixin<T extends StatefulWidget> on State<T> {
       }
     } else if (state is PetError) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text(state.message),
+          backgroundColor: AdminConstants.red,
+        ),
       );
     }
   }

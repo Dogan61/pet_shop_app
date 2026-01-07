@@ -6,14 +6,6 @@ part 'favorite_model.g.dart';
 
 @JsonSerializable()
 class FavoriteModel extends Equatable {
-  final String id;
-  final String userId;
-  final String petId;
-  @JsonKey(name: 'createdAt')
-  final DateTime? createdAt;
-  @JsonKey(name: 'pet')
-  final PetModel? pet;
-
   const FavoriteModel({
     required this.id,
     required this.userId,
@@ -24,6 +16,13 @@ class FavoriteModel extends Equatable {
 
   factory FavoriteModel.fromJson(Map<String, dynamic> json) =>
       _$FavoriteModelFromJson(json);
+  final String id;
+  final String userId;
+  final String petId;
+  @JsonKey(name: 'createdAt')
+  final DateTime? createdAt;
+  @JsonKey(name: 'pet')
+  final PetModel? pet;
 
   Map<String, dynamic> toJson() => _$FavoriteModelToJson(this);
 
@@ -46,4 +45,3 @@ class FavoriteModel extends Equatable {
   @override
   List<Object?> get props => [id, userId, petId, createdAt, pet];
 }
-

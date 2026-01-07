@@ -13,15 +13,8 @@ class ProfileConstants {
   static const Color logoutButtonBorderColor = Color(0xFFFFEBEE);
   static const Color grey = Colors.grey;
 
-  // Default User Data
-  static const String defaultUserName = 'Ahmet Yılmaz';
-  static const String defaultEmail = 'ahmetyilmaz@example.com';
-  static const String defaultPhone = '+90 555 123 45 67';
-  static const String defaultAddress = 'Kadıköy, İstanbul, Türkiye';
-  static const String defaultAvatarUrl = 'https://via.placeholder.com/150';
 
   // App Info
   static const String appVersion = 'v1.0.2';
   static const String appCompany = 'PetStore Inc.';
 }
-

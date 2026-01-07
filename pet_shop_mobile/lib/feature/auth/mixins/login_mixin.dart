@@ -14,100 +14,71 @@ mixin LoginMixin<T extends StatefulWidget> on State<T> {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   /// Handle Google Sign In
-  Future<void> handleGoogleSignIn(BuildContext context) async {
+  /// Returns error message if failed, null if successful
+  Future<String?> handleGoogleSignIn(BuildContext context) async {
     try {
       final googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
-        // User cancelled the sign-in
-        return;
+        return null; // User cancelled
       }
 
       final googleAuth = await googleUser.authentication;
 
-      // Send ID token to backend
-      if (mounted) {
+      if (mounted && googleAuth.idToken != null) {
         await context.read<AuthCubit>().loginWithGoogle(googleAuth.idToken!);
+        return null; // Success
       }
+      return 'Failed to get Google ID token';
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Google sign in failed: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      return 'Google sign in failed: $e';
     }
   }
 
   /// Handle Facebook Sign In
-  Future<void> handleFacebookSignIn(BuildContext context) async {
+  /// Returns error message if failed, null if successful
+  Future<String?> handleFacebookSignIn(BuildContext context) async {
     try {
       final result = await FacebookAuth.instance.login();
 
       if (result.status == LoginStatus.success) {
         final accessToken = result.accessToken!;
 
-        // Send access token to backend
         if (mounted) {
           await context.read<AuthCubit>().loginWithFacebook(
             accessToken.tokenString,
           );
+          return null; // Success
         }
+        return 'Widget not mounted';
       } else if (result.status == LoginStatus.cancelled) {
-        // User cancelled the login
-        return;
+        return null; // User cancelled
       } else {
-        throw Exception(result.message ?? 'Facebook login failed');
+        return result.message ?? 'Facebook login failed';
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Facebook sign in failed: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      return 'Facebook sign in failed: $e';
     }
   }
 
-  /// Handle auth state changes
-  void handleAuthState(
-    BuildContext context,
-    AuthState state,
-    AppLocalizations? l10n,
-  ) {
-    if (state is AuthAuthenticated || state is AuthRegistered) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            state is AuthAuthenticated
-                ? (l10n?.loginSuccessful ??
-                      LoginConstants.loginSuccessfulFallback)
-                : (l10n?.registrationSuccessful ??
-                      LoginConstants.registrationSuccessfulFallback),
-          ),
-          backgroundColor: Colors.green,
-        ),
-      );
-
-      // Navigate to home after successful login/register
-      if (mounted) {
-        try {
-          context.go(LoginConstants.homeRoute);
-        } catch (e) {
-          // Try alternative navigation method
-          Navigator.of(
-            context,
-          ).pushNamedAndRemoveUntil(LoginConstants.homeRoute, (route) => false);
-        }
-      }
-    } else if (state is AuthError) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(state.message), backgroundColor: Colors.red),
-      );
+  /// Get success message for auth state
+  /// Returns message if state is success, null otherwise
+  String? getAuthSuccessMessage(AuthState state, AppLocalizations? l10n) {
+    if (state is AuthAuthenticated) {
+      return l10n?.loginSuccessful ?? LoginConstants.loginSuccessfulFallback;
+    } else if (state is AuthRegistered) {
+      return l10n?.registrationSuccessful ??
+          LoginConstants.registrationSuccessfulFallback;
     }
+    return null;
+  }
+
+  /// Get error message for auth state
+  /// Returns error message if state is error, null otherwise
+  String? getAuthErrorMessage(AuthState state) {
+    if (state is AuthError) {
+      return state.message;
+    }
+    return null;
   }
 
   /// Handle login form submission

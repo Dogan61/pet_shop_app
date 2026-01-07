@@ -1,12 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_shop_app/core/data/repositories/pet_repository.dart';
-import 'package:pet_shop_app/feature/pet/models/pet_model.dart';
 import 'package:pet_shop_app/feature/pet/bloc/pet_state.dart';
+import 'package:pet_shop_app/feature/pet/models/pet_model.dart';
 
 class PetCubit extends Cubit<PetState> {
-  final PetRepository repository;
-
   PetCubit({required this.repository}) : super(const PetInitial());
+  final PetRepository repository;
 
   Future<void> getAllPets({
     String? category,
@@ -22,12 +21,14 @@ class PetCubit extends Cubit<PetState> {
       );
 
       if (response.success && response.data != null) {
-        emit(PetLoaded(
-          pets: response.data!,
-          totalCount: response.pagination?['total'] as int?,
-          currentPage: response.pagination?['page'] as int?,
-          totalPages: response.pagination?['pages'] as int?,
-        ));
+        emit(
+          PetLoaded(
+            pets: response.data!,
+            totalCount: response.pagination?['total'] as int?,
+            currentPage: response.pagination?['page'] as int?,
+            totalPages: response.pagination?['pages'] as int?,
+          ),
+        );
       } else {
         emit(PetError(message: response.message ?? 'Failed to load pets'));
       }
@@ -111,4 +112,3 @@ class PetCubit extends Cubit<PetState> {
     }
   }
 }
-

@@ -17,29 +17,28 @@ class UserLoading extends UserState {
 }
 
 class UserLoaded extends UserState {
-  final UserModel user;
 
   const UserLoaded({required this.user});
+  final UserModel user;
 
   @override
   List<Object?> get props => [user];
 }
 
 class UserError extends UserState {
-  final String message;
 
   const UserError({required this.message});
+  final String message;
 
   @override
   List<Object?> get props => [message];
 }
 
 class UserUpdated extends UserState {
-  final UserModel user;
 
   const UserUpdated({required this.user});
+  final UserModel user;
 
   @override
   List<Object?> get props => [user];
 }
-

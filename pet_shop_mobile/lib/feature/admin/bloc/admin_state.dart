@@ -30,27 +30,3 @@ class AdminError extends AdminState {
   @override
   List<Object?> get props => [message];
 }
-
-class AdminSet extends AdminState {
-  const AdminSet({required this.message});
-  final String message;
-
-  @override
-  List<Object?> get props => [message];
-}
-
-class AdminRemoved extends AdminState {
-  const AdminRemoved({required this.message});
-  final String message;
-
-  @override
-  List<Object?> get props => [message];
-}
-
-class AdminsLoaded extends AdminState {
-  const AdminsLoaded({required this.admins});
-  final List<Map<String, dynamic>> admins;
-
-  @override
-  List<Object?> get props => [admins];
-}

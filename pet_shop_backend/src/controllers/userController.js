@@ -1,4 +1,6 @@
 const { getFirestore } = require('../config/firebase');
+const { createUserProfileData } = require('../utils/userHelper');
+const { sendSuccess } = require('../utils/responseHelper');
 const admin = require('firebase-admin');
 
 // @desc    Get user profile
@@ -8,38 +10,20 @@ exports.getProfile = async (req, res, next) => {
   try {
     const db = getFirestore();
     const userDoc = await db.collection('users').doc(req.user.uid).get();
-    
+
     if (!userDoc.exists) {
-      // Create user profile if doesn't exist
-      const userData = {
+      const userData = createUserProfileData({
         uid: req.user.uid,
         email: req.user.email || '',
         fullName: req.user.displayName || '',
-        phone: '',
-        address: '',
         profileImage: req.user.photoURL || '',
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      };
-      
-      await db.collection('users').doc(req.user.uid).set(userData);
-      
-      return res.json({
-        success: true,
-        data: {
-          id: req.user.uid,
-          ...userData,
-        },
       });
+
+      await db.collection('users').doc(req.user.uid).set(userData);
+      return sendSuccess(res, { id: req.user.uid, ...userData }, 'User profile retrieved');
     }
-    
-    res.json({
-      success: true,
-      data: {
-        id: userDoc.id,
-        ...userDoc.data(),
-      },
-    });
+
+    sendSuccess(res, { id: userDoc.id, ...userDoc.data() }, 'User profile retrieved');
   } catch (error) {
     next(error);
   }
@@ -52,26 +36,17 @@ exports.updateProfile = async (req, res, next) => {
   try {
     const db = getFirestore();
     const userRef = db.collection('users').doc(req.user.uid);
-    
+
     const updateData = {
       ...req.body,
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
-    
+
     await userRef.update(updateData);
-    
     const updatedUser = await userRef.get();
-    
-    res.json({
-      success: true,
-      data: {
-        id: updatedUser.id,
-        ...updatedUser.data(),
-      },
-    });
+
+    sendSuccess(res, { id: updatedUser.id, ...updatedUser.data() }, 'Profile updated successfully');
   } catch (error) {
     next(error);
   }
 };
-
-

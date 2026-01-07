@@ -52,6 +52,10 @@ Flutter mobile application for Pet Shop with clean architecture, state managemen
 - **very_good_analysis** (^8.0.0) - Linting rules
 - **flutter_lints** (^5.0.0) - Additional linting rules
 
+### Testing
+- **bloc_test** (^9.1.5) - BLoC/Cubit testing utilities
+- **mocktail** (^1.0.0) - Mock objects for testing
+
 ## 🚀 Features
 
 - ✅ Clean Architecture pattern
@@ -69,7 +73,11 @@ Flutter mobile application for Pet Shop with clean architecture, state managemen
 - ✅ Error handling
 - ✅ Loading states
 - ✅ Form validation
-- ✅ Social login UI (Google & Facebook buttons - UI ready, backend integration pending)
+- ✅ Social login (Google & Facebook) - Fully integrated
+- ✅ Persistent authentication
+- ✅ Test coverage (Unit & Widget tests)
+- ✅ Constants management (Centralized constants for colors, spacing, etc.)
+- ✅ Separation of concerns (Controllers, Mixins, Views)
 
 ## 📦 Prerequisites
 
@@ -170,6 +178,53 @@ flutter run -d chrome
 
 Press `r` in the terminal to hot reload, or `R` for hot restart.
 
+## 🎨 Code Quality & Best Practices
+
+### Constants Management
+
+Tüm sabit değerler (colors, spacing, font sizes, etc.) merkezi constants dosyalarında yönetilir:
+
+- `core/constants/admin_constants.dart` - Admin sayfaları için constants
+- `core/constants/app_dimensions.dart` - Responsive dimensions ve spacing
+- `core/constants/home_constants.dart` - Home sayfası constants
+- `core/constants/login_constants.dart` - Login/Register constants
+- Diğer feature-specific constants dosyaları
+
+**Kullanım Örneği:**
+```dart
+// ❌ Kötü: Hardcoded değer
+Container(
+  padding: EdgeInsets.all(16),
+  color: Colors.blue,
+)
+
+// ✅ İyi: Constants kullanımı
+Container(
+  padding: AppDimensionsPadding.allMedium(context),
+  color: AdminConstants.primaryColor,
+)
+```
+
+### Separation of Concerns
+
+Kod organizasyonu için net ayrımlar:
+
+- **Views**: Sadece UI rendering
+- **Controllers**: Form state ve business logic
+- **Mixins**: Reusable logic (navigation, state handling)
+- **BLoC/Cubit**: State management
+- **Repositories**: Data layer abstraction
+
+**Örnek Yapı:**
+```
+feature/admin/pets/
+├── admin_pet_form_view.dart      # UI only
+├── controllers/
+│   └── admin_pet_form_controller.dart  # Form logic
+└── mixins/
+    └── admin_pets_list_mixin.dart     # Reusable logic
+```
+
 ## 📁 Project Structure
 
 ```
@@ -193,8 +248,10 @@ pet_shop_mobile/
 │   │   ├── admin/              # Admin features
 │   │   │   ├── bloc/          # Admin state management
 │   │   │   ├── dashboard/     # Admin dashboard
-│   │   │   ├── login/         # Admin login
+│   │   │   │   └── mixins/    # Dashboard logic mixins
 │   │   │   └── pets/          # Admin pet management
+│   │   │       ├── controllers/ # Pet form controllers
+│   │   │       └── mixins/      # Pet list logic mixins
 │   │   ├── auth/              # Authentication
 │   │   │   ├── bloc/          # Auth state management
 │   │   │   └── models/        # Auth models
@@ -212,6 +269,11 @@ pet_shop_mobile/
 │   │       └── bloc/          # User state management
 │   ├── l10n/                  # Generated localization files
 │   └── main.dart              # App entry point
+├── test/                      # Test files
+│   ├── unit/                  # Unit tests
+│   │   └── bloc/             # BLoC/Cubit tests
+│   ├── widgets/              # Widget tests
+│   └── README.md             # Test documentation
 ├── assets/
 │   ├── images/                # App images
 │   └── l10n/                  # Localization files (.arb)
@@ -358,17 +420,68 @@ flutter build ios --release
 
 ## 🧪 Testing
 
-### Run Tests
+### Test Yapısı
+
+Proje kapsamlı test yapısına sahiptir:
+
+- **Unit Testler**: BLoC/Cubit testleri (`test/unit/bloc/`)
+- **Widget Testleri**: UI component testleri (`test/widgets/`)
+- **Test Coverage**: Coverage raporu oluşturma
+
+### Test Çalıştırma
 
 ```bash
+# Tüm testleri çalıştır
 flutter test
+
+# Belirli bir test dosyası
+flutter test test/unit/bloc/auth_cubit_test.dart
+
+# Widget testleri
+flutter test test/widgets/
+
+# Coverage raporu
+flutter test --coverage
 ```
 
-### Widget Tests
+### Test Paketleri
 
-```bash
-flutter test test/widget_test.dart
+- **bloc_test**: BLoC/Cubit testleri için özel test utilities
+- **mocktail**: Mock objeler oluşturma için
+
+### Test Örnekleri
+
+**BLoC Test Örneği:**
+```dart
+blocTest<AuthCubit, AuthState>(
+  'emits [AuthLoading, AuthAuthenticated] when login succeeds',
+  build: () {
+    when(() => mockRepository.login(loginRequest)).thenAnswer(...);
+    return authCubit;
+  },
+  act: (cubit) => cubit.login(loginRequest),
+  expect: () => [
+    const AuthLoading(),
+    const AuthAuthenticated(user: user, token: 'test_token'),
+  ],
+);
 ```
+
+**Widget Test Örneği:**
+```dart
+testWidgets('BackAppBar displays title correctly', (WidgetTester tester) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      home: Scaffold(
+        appBar: const BackAppBar(title: 'Test Title'),
+      ),
+    ),
+  );
+  expect(find.text('Test Title'), findsOneWidget);
+});
+```
+
+Detaylı test dokümantasyonu için: `test/README.md`
 
 ## 📱 Screens
 
@@ -396,10 +509,10 @@ flutter test test/widget_test.dart
 5. Token sent in API requests via `Authorization` header
 
 ### Social Authentication
-- **Google Login** - UI buttons present, backend integration pending
-- **Facebook Login** - UI buttons present, backend integration pending
+- **Google Login** - ✅ Fully integrated with backend
+- **Facebook Login** - ✅ Fully integrated with backend
 
-**Note:** Social login buttons are visible in the login and register screens, but the functionality is not yet implemented. Currently only email/password authentication works.
+**Note:** Social login is fully functional. Users can sign in with Google or Facebook accounts.
 
 ## 📡 API Integration
 

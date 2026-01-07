@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pet_shop_app/core/constants/admin_constants.dart';
 import 'package:pet_shop_app/core/constants/app_dimensions.dart';
 import 'package:pet_shop_app/core/di/injection_container.dart' as di;
 import 'package:pet_shop_app/core/models/pet_category.dart';
 import 'package:pet_shop_app/feature/admin/pets/controllers/admin_pet_form_controller.dart';
+import 'package:pet_shop_app/feature/auth/bloc/auth_cubit.dart';
 import 'package:pet_shop_app/feature/pet/bloc/pet_cubit.dart';
 import 'package:pet_shop_app/feature/pet/bloc/pet_state.dart';
 
@@ -39,12 +41,40 @@ class _AdminPetFormViewState extends State<AdminPetFormView> {
 
   @override
   Widget build(BuildContext context) {
-
     return BlocProvider(
       create: (context) => di.sl<PetCubit>(),
       child: BlocListener<PetCubit, PetState>(
         listener: (context, state) {
-          _controller.handlePetState(context, state);
+          // Handle pet state changes
+          if (_controller.shouldLoadPetData(state)) {
+            final pet = _controller.getPetFromState(state);
+            if (pet != null) {
+              _controller.loadPetData(pet);
+            }
+          }
+
+          // Show success message
+          final successMessage = _controller.getSuccessMessage(state);
+          if (successMessage != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(successMessage),
+                backgroundColor: AdminConstants.addPetColor,
+              ),
+            );
+            context.go(AdminConstants.adminPetsRoute);
+          }
+
+          // Show error message
+          final errorMessage = _controller.getErrorMessage(state);
+          if (errorMessage != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(errorMessage),
+                backgroundColor: AdminConstants.red,
+              ),
+            );
+          }
         },
         child: Scaffold(
           appBar: AppBar(
@@ -271,7 +301,48 @@ class _AdminPetFormViewState extends State<AdminPetFormView> {
                         child: ElevatedButton(
                           onPressed: isLoading
                               ? null
-                              : () => _controller.submitForm(context),
+                              : () {
+                                  if (!_controller.validateForm()) {
+                                    return;
+                                  }
+
+                                  final authState = context
+                                      .read<AuthCubit>()
+                                      .state;
+                                  if (!_controller.isUserAuthenticated(
+                                    authState,
+                                  )) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          AdminConstants.accessDenied,
+                                        ),
+                                        backgroundColor: AdminConstants.red,
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  final token = _controller.getAuthToken(
+                                    authState,
+                                  );
+                                  if (token == null) {
+                                    return;
+                                  }
+
+                                  final pet = _controller.buildPetModel();
+                                  final petCubit = context.read<PetCubit>();
+
+                                  if (_controller.isEdit) {
+                                    petCubit.updatePet(
+                                      _controller.petId!,
+                                      pet,
+                                      token,
+                                    );
+                                  } else {
+                                    petCubit.createPet(pet, token);
+                                  }
+                                },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AdminConstants.primaryColor,
                             shape: RoundedRectangleBorder(
@@ -283,10 +354,10 @@ class _AdminPetFormViewState extends State<AdminPetFormView> {
                             disabledBackgroundColor: AdminConstants.grey300,
                           ),
                           child: isLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
+                              ? SizedBox(
+                                  height: AppDimensionsSize.iconSizeSmall(context),
+                                  width: AppDimensionsSize.iconSizeSmall(context),
+                                  child: const CircularProgressIndicator(
                                     strokeWidth: 2,
                                     valueColor: AlwaysStoppedAnimation<Color>(
                                       AdminConstants.white,

@@ -1,16 +1,16 @@
 import 'package:go_router/go_router.dart';
 import 'package:pet_shop_app/feature/admin/dashboard/admin_dashboard_view.dart';
-import 'package:pet_shop_app/feature/admin/login/admin_login_view.dart';
 import 'package:pet_shop_app/feature/admin/pets/admin_pet_form_view.dart';
 import 'package:pet_shop_app/feature/admin/pets/admin_pets_list_view.dart';
+import 'package:pet_shop_app/feature/auth/views/login_view.dart';
+import 'package:pet_shop_app/feature/auth/views/register_view.dart';
 import 'package:pet_shop_app/feature/favorite/views/favorites_view.dart';
 import 'package:pet_shop_app/feature/home/home_view.dart';
 import 'package:pet_shop_app/feature/pet/views/pet_detail_view.dart';
-import 'package:pet_shop_app/feature/auth/views/login_view.dart';
-import 'package:pet_shop_app/feature/auth/views/register_view.dart';
 import 'package:pet_shop_app/feature/profile/profile_view.dart';
 
 /// Application router configuration
+/// Note: Authentication redirect is handled in app_widget.dart via BlocListener
 final GoRouter appRouter = GoRouter(
   initialLocation: '/login',
   routes: [
@@ -54,11 +54,6 @@ final GoRouter appRouter = GoRouter(
     ),
 
     // Admin Routes
-    GoRoute(
-      path: '/admin/login',
-      name: 'admin-login',
-      builder: (context, state) => const AdminLoginView(),
-    ),
     GoRoute(
       path: '/admin/dashboard',
       name: 'admin-dashboard',

@@ -17,6 +17,9 @@ Pet Shop App, evcil hayvan satış platformu için geliştirilmiş tam kapsamlı
 - ✅ **Çoklu Dil Desteği**: Türkçe ve İngilizce
 - ✅ **Responsive Tasarım**: Farklı ekran boyutlarına uyumlu
 - ✅ **Clean Architecture**: Modüler ve ölçeklenebilir kod yapısı
+- ✅ **Test Coverage**: Unit ve widget testleri
+- ✅ **Code Quality**: Constants kullanımı, separation of concerns
+- ✅ **Backend Helpers**: Merkezi error handling ve response management
 
 ## 🏗️ Proje Yapısı
 
@@ -36,6 +39,10 @@ pet_shop_app/
     │   ├── middleware/      # Auth, error handling middleware
     │   ├── config/          # Firebase, env konfigürasyonları
     │   └── utils/           # Yardımcı fonksiyonlar
+    │       ├── userHelper.js      # User profile helper functions
+    │       ├── responseHelper.js  # Standardized API responses
+    │       ├── errorHelper.js     # Centralized error handling
+    │       └── firestoreHelper.js # Firestore utility functions
     └── scripts/             # Seed ve admin scriptleri
 ```
 
@@ -245,14 +252,36 @@ flutter build ios --release
 
 ## 🧪 Test
 
-```bash
-# Backend testleri
-cd pet_shop_backend
-npm test
+### Mobile Testleri
 
-# Mobile testleri
+```bash
 cd pet_shop_mobile
 flutter test
+```
+
+**Test Yapısı:**
+- ✅ Unit testler (BLoC/Cubit testleri)
+- ✅ Widget testleri
+- ✅ Test coverage raporu: `flutter test --coverage`
+
+**Test Paketleri:**
+- `bloc_test` - BLoC/Cubit testleri için
+- `mocktail` - Mock objeler için
+
+**Test Klasör Yapısı:**
+```
+test/
+├── unit/              # Unit testler
+│   └── bloc/         # BLoC/Cubit testleri
+├── widgets/          # Widget testleri
+└── README.md         # Test dokümantasyonu
+```
+
+### Backend Testleri
+
+```bash
+cd pet_shop_backend
+npm test
 ```
 
 ## 📝 Lisans
