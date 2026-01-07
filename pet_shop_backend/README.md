@@ -384,28 +384,28 @@ Import `Pet_Shop_API.postman_collection.json` into Postman for API testing.
 
 ### Helper Functions
 
-Backend'de kod tekrarını önlemek ve tutarlılık sağlamak için helper functions kullanılır:
+Helper functions are used in the backend to prevent code duplication and ensure consistency:
 
-- **responseHelper.js**: Standart API response formatları
-  - `sendSuccess()` - Başarılı response
-  - `sendError()` - Hata response
-  - `sendValidationError()` - Validation hatası
-  - `sendUnauthorized()` - Yetkisiz erişim
-  - `sendForbidden()` - Yasak erişim
-  - `sendNotFound()` - Bulunamadı
-  - `sendServerError()` - Sunucu hatası
+- **responseHelper.js**: Standard API response formats
+  - `sendSuccess()` - Success response
+  - `sendError()` - Error response
+  - `sendValidationError()` - Validation error
+  - `sendUnauthorized()` - Unauthorized access
+  - `sendForbidden()` - Forbidden access
+  - `sendNotFound()` - Not found
+  - `sendServerError()` - Server error
 
-- **errorHelper.js**: Merkezi error handling
-  - `handleFirebaseAuthError()` - Firebase Auth hataları
-  - `handleFirebaseRestApiError()` - Firebase REST API hataları
-  - `handleControllerError()` - Controller seviyesi hatalar
+- **errorHelper.js**: Centralized error handling
+  - `handleFirebaseAuthError()` - Firebase Auth errors
+  - `handleFirebaseRestApiError()` - Firebase REST API errors
+  - `handleControllerError()` - Controller-level errors
 
-- **userHelper.js**: User profile yönetimi
-  - `createUserProfileData()` - Yeni user profile oluşturma
-  - `createOrUpdateUserProfile()` - User profile güncelleme
+- **userHelper.js**: User profile management
+  - `createUserProfileData()` - Create new user profile
+  - `createOrUpdateUserProfile()` - Update user profile
 
 - **firestoreHelper.js**: Firestore utility functions
-  - `convertTimestamps()` - Timestamp dönüşümleri
+  - `convertTimestamps()` - Timestamp conversions
   - `timestampToISO()` - Timestamp to ISO string
 
 ## 🐛 Troubleshooting

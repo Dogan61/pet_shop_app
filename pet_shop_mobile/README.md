@@ -182,23 +182,23 @@ Press `r` in the terminal to hot reload, or `R` for hot restart.
 
 ### Constants Management
 
-Tüm sabit değerler (colors, spacing, font sizes, etc.) merkezi constants dosyalarında yönetilir:
+All constant values (colors, spacing, font sizes, etc.) are managed in centralized constants files:
 
-- `core/constants/admin_constants.dart` - Admin sayfaları için constants
-- `core/constants/app_dimensions.dart` - Responsive dimensions ve spacing
-- `core/constants/home_constants.dart` - Home sayfası constants
+- `core/constants/admin_constants.dart` - Constants for admin pages
+- `core/constants/app_dimensions.dart` - Responsive dimensions and spacing
+- `core/constants/home_constants.dart` - Home page constants
 - `core/constants/login_constants.dart` - Login/Register constants
-- Diğer feature-specific constants dosyaları
+- Other feature-specific constants files
 
-**Kullanım Örneği:**
+**Usage Example:**
 ```dart
-// ❌ Kötü: Hardcoded değer
+// ❌ Bad: Hardcoded value
 Container(
   padding: EdgeInsets.all(16),
   color: Colors.blue,
 )
 
-// ✅ İyi: Constants kullanımı
+// ✅ Good: Constants usage
 Container(
   padding: AppDimensionsPadding.allMedium(context),
   color: AdminConstants.primaryColor,
@@ -207,15 +207,15 @@ Container(
 
 ### Separation of Concerns
 
-Kod organizasyonu için net ayrımlar:
+Clear separation for code organization:
 
-- **Views**: Sadece UI rendering
-- **Controllers**: Form state ve business logic
+- **Views**: UI rendering only
+- **Controllers**: Form state and business logic
 - **Mixins**: Reusable logic (navigation, state handling)
 - **BLoC/Cubit**: State management
 - **Repositories**: Data layer abstraction
 
-**Örnek Yapı:**
+**Example Structure:**
 ```
 feature/admin/pets/
 ├── admin_pet_form_view.dart      # UI only
@@ -420,38 +420,38 @@ flutter build ios --release
 
 ## 🧪 Testing
 
-### Test Yapısı
+### Test Structure
 
-Proje kapsamlı test yapısına sahiptir:
+The project has a comprehensive test structure:
 
-- **Unit Testler**: BLoC/Cubit testleri (`test/unit/bloc/`)
-- **Widget Testleri**: UI component testleri (`test/widgets/`)
-- **Test Coverage**: Coverage raporu oluşturma
+- **Unit Tests**: BLoC/Cubit tests (`test/unit/bloc/`)
+- **Widget Tests**: UI component tests (`test/widgets/`)
+- **Test Coverage**: Generate coverage report
 
-### Test Çalıştırma
+### Running Tests
 
 ```bash
-# Tüm testleri çalıştır
+# Run all tests
 flutter test
 
-# Belirli bir test dosyası
+# Run a specific test file
 flutter test test/unit/bloc/auth_cubit_test.dart
 
-# Widget testleri
+# Run widget tests
 flutter test test/widgets/
 
-# Coverage raporu
+# Generate coverage report
 flutter test --coverage
 ```
 
-### Test Paketleri
+### Test Packages
 
-- **bloc_test**: BLoC/Cubit testleri için özel test utilities
-- **mocktail**: Mock objeler oluşturma için
+- **bloc_test**: Special test utilities for BLoC/Cubit tests
+- **mocktail**: For creating mock objects
 
-### Test Örnekleri
+### Test Examples
 
-**BLoC Test Örneği:**
+**BLoC Test Example:**
 ```dart
 blocTest<AuthCubit, AuthState>(
   'emits [AuthLoading, AuthAuthenticated] when login succeeds',
@@ -467,7 +467,7 @@ blocTest<AuthCubit, AuthState>(
 );
 ```
 
-**Widget Test Örneği:**
+**Widget Test Example:**
 ```dart
 testWidgets('BackAppBar displays title correctly', (WidgetTester tester) async {
   await tester.pumpWidget(
@@ -481,7 +481,7 @@ testWidgets('BackAppBar displays title correctly', (WidgetTester tester) async {
 });
 ```
 
-Detaylı test dokümantasyonu için: `test/README.md`
+For detailed test documentation: `test/README.md`
 
 ## 📱 Screens
 
