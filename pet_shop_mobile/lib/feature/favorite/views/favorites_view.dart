@@ -13,6 +13,7 @@ import 'package:pet_shop_app/feature/favorite/bloc/favorite_cubit.dart';
 import 'package:pet_shop_app/feature/favorite/bloc/favorite_state.dart';
 import 'package:pet_shop_app/feature/favorite/controllers/favorites_controller.dart';
 import 'package:pet_shop_app/feature/favorite/models/favorite_model.dart';
+import 'package:pet_shop_app/feature/favorite/mixins/favorites_mixin.dart';
 import 'package:pet_shop_app/feature/favorite/widgets/favorites_card.dart';
 import 'package:pet_shop_app/l10n/app_localizations.dart';
 
@@ -23,7 +24,7 @@ class FavoritesView extends StatefulWidget {
   State<FavoritesView> createState() => _FavoritesViewState();
 }
 
-class _FavoritesViewState extends State<FavoritesView> {
+class _FavoritesViewState extends State<FavoritesView> with FavoritesMixin {
   late final FavoritesController _controller;
   int _currentIndex = 1; // Favorites index
 
@@ -60,25 +61,17 @@ class _FavoritesViewState extends State<FavoritesView> {
       create: (context) => di.sl<FavoriteCubit>(),
       child: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, authState) {
-          // Check if user is authenticated (either AuthAuthenticated or AuthRegistered)
-          final isAuthenticated =
-              authState is AuthAuthenticated || authState is AuthRegistered;
-          final token = authState is AuthAuthenticated
-              ? authState.token
-              : authState is AuthRegistered
-              ? authState.token
-              : null;
+          // Kimlik doğrulama ve token bilgisini mixin üzerinden yönet
+          final isAuthenticated = isUserAuthenticated(authState);
+          final token = extractToken(authState);
 
-          // Load favorites once when authenticated
-          if (isAuthenticated &&
-              token != null &&
-              !_controller.hasLoadedFavorites) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted) {
-                context.read<FavoriteCubit>().getFavorites(token);
-                _controller.markFavoritesLoaded();
-              }
-            });
+          // Kimlik doğrulanmışsa favorileri sadece bir kez yükle
+          if (isAuthenticated && token != null) {
+            loadFavoritesOnce(
+              context: context,
+              controller: _controller,
+              token: token,
+            );
           }
 
           if (!isAuthenticated || token == null) {
@@ -93,12 +86,8 @@ class _FavoritesViewState extends State<FavoritesView> {
             body: BlocConsumer<FavoriteCubit, FavoriteState>(
               listener: (context, state) {
                 if (state is FavoriteError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.message),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
+                  // Hata durumunu mixin üzerinden yönet
+                  handleFavoriteError(context, state);
                 }
               },
               builder: (context, state) {

@@ -10,6 +10,7 @@ import 'package:pet_shop_app/feature/favorite/bloc/favorite_cubit.dart';
 import 'package:pet_shop_app/feature/favorite/bloc/favorite_state.dart';
 import 'package:pet_shop_app/feature/pet/bloc/pet_cubit.dart';
 import 'package:pet_shop_app/feature/pet/bloc/pet_state.dart';
+import 'package:pet_shop_app/feature/pet/mixins/pet_detail_mixin.dart';
 
 class PetDetailView extends StatefulWidget {
   const PetDetailView({required this.petId, super.key});
@@ -20,7 +21,7 @@ class PetDetailView extends StatefulWidget {
   State<PetDetailView> createState() => _PetDetailViewState();
 }
 
-class _PetDetailViewState extends State<PetDetailView> {
+class _PetDetailViewState extends State<PetDetailView> with PetDetailMixin {
   bool _hasLoadedData = false;
 
   @override
@@ -32,23 +33,18 @@ class _PetDetailViewState extends State<PetDetailView> {
       ],
       child: Builder(
         builder: (context) {
-          // Load data once when providers are ready
-          if (!_hasLoadedData) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted) {
-                // Load pet details
-                context.read<PetCubit>().getPetById(widget.petId);
-                // Load favorites if authenticated
-                final authState = context.read<AuthCubit>().state;
-                if (authState is AuthAuthenticated) {
-                  context.read<FavoriteCubit>().getFavorites(authState.token);
-                }
-                setState(() {
-                  _hasLoadedData = true;
-                });
-              }
-            });
-          }
+          // Veri yükleme iş mantığını mixin'e taşı
+          loadPetDetailAndFavoritesOnce(
+            context: context,
+            petId: widget.petId,
+            hasLoadedData: _hasLoadedData,
+            markLoaded: () {
+              if (!mounted) return;
+              setState(() {
+                _hasLoadedData = true;
+              });
+            },
+          );
 
           return _PetDetailContent(petId: widget.petId);
         },

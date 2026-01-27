@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pet_shop_app/core/validation/login_validator.dart';
+import 'package:pet_shop_app/feature/auth/validation/login_validator.dart';
 import 'package:pet_shop_app/l10n/app_localizations.dart';
 
 /// Register form validations
