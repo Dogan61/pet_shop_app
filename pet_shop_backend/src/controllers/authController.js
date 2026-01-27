@@ -1,8 +1,13 @@
 const { getAuth, getFirestore } = require('../config/firebase');
 const axios = require('axios');
-const { createUserProfileData, createOrUpdateUserProfile } = require('../utils/userHelper');
 const { sendSuccess, sendValidationError, sendServerError, sendUnauthorized } = require('../utils/responseHelper');
 const { handleFirebaseAuthError, handleFirebaseRestApiError } = require('../utils/errorHelper');
+const {
+  getOrCreateUserByDecodedToken,
+  getOrCreateUserFromRecordOrDecoded,
+  createUserProfile,
+  createOrUpdateSocialUserProfile,
+} = require('../models/userModel');
 
 // @desc    Register user
 // @route   POST /api/auth/register
@@ -23,15 +28,12 @@ exports.register = async (req, res, next) => {
       emailVerified: false,
     });
 
-    const db = getFirestore();
-    const userData = createUserProfileData({
+    await createUserProfile(userRecord.uid, {
       uid: userRecord.uid,
       email: userRecord.email || email,
       fullName: fullName || userRecord.displayName || '',
       profileImage: userRecord.photoURL || '',
     });
-
-    await db.collection('users').doc(userRecord.uid).set(userData);
     const customToken = await auth.createCustomToken(userRecord.uid);
 
     sendSuccess(
@@ -85,37 +87,15 @@ exports.login = async (req, res, next) => {
 
       if (response.data && response.data.idToken) {
         const decodedToken = await auth.verifyIdToken(response.data.idToken);
-        const db = getFirestore();
-        const userDoc = await db.collection('users').doc(decodedToken.uid).get();
-
-        let userData;
-        if (userDoc.exists) {
-          userData = userDoc.data();
-        } else {
-          let userRecord = null;
-          try {
-            userRecord = await auth.getUser(decodedToken.uid);
-          } catch (err) {
-            // User record not found, continue with decoded token data
-          }
-
-          userData = createUserProfileData({
-            uid: decodedToken.uid,
-            email: decodedToken.email || email,
-            fullName: decodedToken.name || userRecord?.displayName || '',
-            profileImage: decodedToken.picture || userRecord?.photoURL || '',
-          });
-
-          await db.collection('users').doc(decodedToken.uid).set(userData);
-        }
+        const userProfile = await getOrCreateUserFromRecordOrDecoded(auth, decodedToken, email);
 
         sendSuccess(
           res,
           {
             user: {
-              id: decodedToken.uid,
-              email: decodedToken.email || email,
-              fullName: userData.fullName || '',
+            id: decodedToken.uid,
+            email: decodedToken.email || email,
+            fullName: userProfile.fullName || '',
             },
             token: response.data.idToken,
           },
@@ -147,22 +127,17 @@ exports.login = async (req, res, next) => {
 // @access  Private
 exports.getMe = async (req, res, next) => {
   try {
-    const db = getFirestore();
-    const userDoc = await db.collection('users').doc(req.user.uid).get();
-
-    if (!userDoc.exists) {
-      const userData = createUserProfileData({
+    const userProfile = await getOrCreateUserByDecodedToken(
+      {
         uid: req.user.uid,
-        email: req.user.email || '',
-        fullName: req.user.displayName || '',
-        profileImage: req.user.photoURL || '',
-      });
+        email: req.user.email,
+        name: req.user.displayName,
+        picture: req.user.photoURL,
+      },
+      req.user.email
+    );
 
-      await db.collection('users').doc(req.user.uid).set(userData);
-      return sendSuccess(res, { id: req.user.uid, ...userData }, 'User profile retrieved');
-    }
-
-    sendSuccess(res, { id: userDoc.id, ...userDoc.data() }, 'User profile retrieved');
+    sendSuccess(res, userProfile, 'User profile retrieved');
   } catch (error) {
     next(error);
   }
@@ -198,15 +173,12 @@ exports.loginWithGoogle = async (req, res, next) => {
       return sendUnauthorized(res, 'Invalid Google ID token');
     }
 
-    const db = getFirestore();
-    const userData = createUserProfileData({
+    const userProfile = await createOrUpdateSocialUserProfile(decodedToken.uid, {
       uid: decodedToken.uid,
       email: decodedToken.email || '',
       fullName: decodedToken.name || '',
       profileImage: decodedToken.picture || '',
     });
-
-    const userProfile = await createOrUpdateUserProfile(db, decodedToken.uid, userData);
 
     sendSuccess(
       res,
@@ -282,15 +254,12 @@ exports.loginWithFacebook = async (req, res, next) => {
       }
     }
 
-    const db = getFirestore();
-    const userData = createUserProfileData({
+    const userProfile = await createOrUpdateSocialUserProfile(userRecord.uid, {
       uid: userRecord.uid,
       email: userRecord.email || facebookUserInfo.email || '',
       fullName: userRecord.displayName || facebookUserInfo.name || '',
       profileImage: facebookUserInfo.picture?.data?.url || userRecord.photoURL || '',
     });
-
-    const userProfile = await createOrUpdateUserProfile(db, userRecord.uid, userData);
     const customToken = await auth.createCustomToken(userRecord.uid);
 
     sendSuccess(

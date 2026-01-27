@@ -1,46 +1,23 @@
-const { getFirestore } = require('../config/firebase');
-const admin = require('firebase-admin');
-const { convertTimestamps } = require('../utils/firestoreHelper');
 const { sendSuccess, sendNotFound } = require('../utils/responseHelper');
+const {
+  getPets,
+  getPetById,
+  getPetsByCategory,
+  createPet,
+  updatePet,
+  deletePet,
+} = require('../models/petModel');
 
 // @desc    Get all pets
 // @route   GET /api/pets
 // @access  Public
 exports.getAllPets = async (req, res, next) => {
   try {
-    const db = getFirestore();
     const { category, page = 1, limit = 10 } = req.query;
 
-    let query = db.collection('pets');
+    const result = await getPets({ category, page, limit });
 
-    if (category && category !== 'all') {
-      query = query.where('category', '==', category);
-    }
-
-    const countSnapshot = await query.get();
-    const total = countSnapshot.size;
-
-    const startIndex = (parseInt(page) - 1) * parseInt(limit);
-    const snapshot = await query
-      .orderBy('createdAt', 'desc')
-      .limit(parseInt(limit))
-      .offset(startIndex)
-      .get();
-
-    const pets = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...convertTimestamps(doc.data()),
-    }));
-
-    sendSuccess(res, {
-      pets,
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total,
-        pages: Math.ceil(total / parseInt(limit)),
-      },
-    });
+    sendSuccess(res, result);
   } catch (error) {
     next(error);
   }
@@ -51,17 +28,13 @@ exports.getAllPets = async (req, res, next) => {
 // @access  Public
 exports.getPetById = async (req, res, next) => {
   try {
-    const db = getFirestore();
-    const petDoc = await db.collection('pets').doc(req.params.id).get();
+    const pet = await getPetById(req.params.id);
 
-    if (!petDoc.exists) {
+    if (!pet) {
       return sendNotFound(res, 'Pet not found');
     }
 
-    sendSuccess(res, {
-      id: petDoc.id,
-      ...convertTimestamps(petDoc.data()),
-    });
+    sendSuccess(res, pet);
   } catch (error) {
     next(error);
   }
@@ -72,15 +45,9 @@ exports.getPetById = async (req, res, next) => {
 // @access  Public
 exports.getPetsByCategory = async (req, res, next) => {
   try {
-    const db = getFirestore();
     const { category } = req.params;
 
-    const snapshot = await db.collection('pets').where('category', '==', category).get();
-
-    const pets = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...convertTimestamps(doc.data()),
-    }));
+    const pets = await getPetsByCategory(category);
 
     sendSuccess(res, { pets, count: pets.length });
   } catch (error) {
@@ -93,21 +60,11 @@ exports.getPetsByCategory = async (req, res, next) => {
 // @access  Private (Admin)
 exports.createPet = async (req, res, next) => {
   try {
-    const db = getFirestore();
-    const petData = {
-      ...req.body,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    };
-
-    const docRef = await db.collection('pets').add(petData);
-    const newPet = await docRef.get();
+    const pet = await createPet(req.body);
 
     sendSuccess(
       res,
-      {
-        id: newPet.id,
-        ...convertTimestamps(newPet.data()),
-      },
+      pet,
       'Pet created successfully',
       201
     );
@@ -121,25 +78,13 @@ exports.createPet = async (req, res, next) => {
 // @access  Private (Admin)
 exports.updatePet = async (req, res, next) => {
   try {
-    const db = getFirestore();
-    const petRef = db.collection('pets').doc(req.params.id);
+    const pet = await updatePet(req.params.id, req.body);
 
-    const petDoc = await petRef.get();
-    if (!petDoc.exists) {
+    if (!pet) {
       return sendNotFound(res, 'Pet not found');
     }
 
-    await petRef.update({
-      ...req.body,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    });
-
-    const updatedPet = await petRef.get();
-
-    sendSuccess(res, {
-      id: updatedPet.id,
-      ...convertTimestamps(updatedPet.data()),
-    });
+    sendSuccess(res, pet);
   } catch (error) {
     next(error);
   }
@@ -150,15 +95,11 @@ exports.updatePet = async (req, res, next) => {
 // @access  Private (Admin)
 exports.deletePet = async (req, res, next) => {
   try {
-    const db = getFirestore();
-    const petRef = db.collection('pets').doc(req.params.id);
+    const deleted = await deletePet(req.params.id);
 
-    const petDoc = await petRef.get();
-    if (!petDoc.exists) {
+    if (!deleted) {
       return sendNotFound(res, 'Pet not found');
     }
-
-    await petRef.delete();
 
     sendSuccess(res, null, 'Pet deleted successfully');
   } catch (error) {
