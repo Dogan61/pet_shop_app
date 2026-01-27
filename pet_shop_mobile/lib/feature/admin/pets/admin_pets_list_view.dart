@@ -6,8 +6,8 @@ import 'package:pet_shop_app/core/di/injection_container.dart' as di;
 import 'package:pet_shop_app/feature/admin/pets/mixins/admin_pets_list_mixin.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_cubit.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_state.dart';
-import 'package:pet_shop_app/feature/pet/bloc/pet_cubit.dart';
-import 'package:pet_shop_app/feature/pet/bloc/pet_state.dart';
+import 'package:pet_shop_app/feature/pet_detail/bloc/pet_cubit.dart';
+import 'package:pet_shop_app/feature/pet_detail/bloc/pet_state.dart';
 
 class AdminPetsListView extends StatefulWidget {
   const AdminPetsListView({super.key});

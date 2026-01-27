@@ -3,9 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pet_shop_app/core/data/repositories/pet_repository.dart';
 import 'package:pet_shop_app/core/models/api_response_model.dart';
-import 'package:pet_shop_app/feature/pet/bloc/pet_cubit.dart';
-import 'package:pet_shop_app/feature/pet/bloc/pet_state.dart';
-import 'package:pet_shop_app/feature/pet/models/pet_model.dart';
+import 'package:pet_shop_app/feature/pet_detail/bloc/pet_cubit.dart';
+import 'package:pet_shop_app/feature/pet_detail/bloc/pet_state.dart';
+import 'package:pet_shop_app/feature/pet_detail/models/pet_model.dart';
 
 // Mock classes
 class MockPetRepository extends Mock implements PetRepository {}

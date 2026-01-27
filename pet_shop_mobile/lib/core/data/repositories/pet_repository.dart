@@ -1,6 +1,6 @@
 import 'package:pet_shop_app/core/data/datasources/pet_data_source.dart';
 import 'package:pet_shop_app/core/models/api_response_model.dart';
-import 'package:pet_shop_app/feature/pet/models/pet_model.dart';
+import 'package:pet_shop_app/feature/pet_detail/models/pet_model.dart';
 
 abstract class PetRepository {
   Future<ApiResponseModel<List<PetModel>>> getAllPets({

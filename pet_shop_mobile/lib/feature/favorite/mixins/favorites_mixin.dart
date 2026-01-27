@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pet_shop_app/core/router/bottom_navigation_items.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_state.dart';
 import 'package:pet_shop_app/feature/favorite/bloc/favorite_cubit.dart';
 import 'package:pet_shop_app/feature/favorite/bloc/favorite_state.dart';
@@ -9,6 +10,24 @@ import 'package:pet_shop_app/feature/favorite/views/favorites_view.dart';
 
 /// Mixin to separate business logic from UI on the Favorites page.
 mixin FavoritesMixin on State<FavoritesView> {
+  /// Controller that manages favorites loading state.
+  late final FavoritesController favoritesController;
+
+  /// Current index of the bottom navigation bar.
+  int currentIndex = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    favoritesController = FavoritesController();
+  }
+
+  @override
+  void dispose() {
+    favoritesController.dispose();
+    super.dispose();
+  }
+
   /// Checks whether the user is authenticated.
   bool isUserAuthenticated(AuthState state) {
     return state is AuthAuthenticated || state is AuthRegistered;
@@ -28,15 +47,14 @@ mixin FavoritesMixin on State<FavoritesView> {
   /// Loads the favorites list only once.
   void loadFavoritesOnce({
     required BuildContext context,
-    required FavoritesController controller,
     required String token,
   }) {
-    if (controller.hasLoadedFavorites) return;
+    if (favoritesController.hasLoadedFavorites) return;
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<FavoriteCubit>().getFavorites(token);
-      controller.markFavoritesLoaded();
+      favoritesController.markFavoritesLoaded();
     });
   }
 
@@ -50,6 +68,15 @@ mixin FavoritesMixin on State<FavoritesView> {
         content: Text(state.message),
         backgroundColor: Colors.red,
       ),
+    );
+  }
+
+  /// Creates the bottom navigation tap handler for this view.
+  void Function(int) createBottomNavTapHandler(BuildContext context) {
+    return BottomNavigationItems.createRouteHandler(
+      context,
+      setState,
+      (index) => currentIndex = index,
     );
   }
 }

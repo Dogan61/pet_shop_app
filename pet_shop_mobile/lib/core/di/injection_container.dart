@@ -14,7 +14,7 @@ import 'package:pet_shop_app/core/data/repositories/user_repository.dart';
 import 'package:pet_shop_app/feature/admin/bloc/admin_cubit.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_cubit.dart';
 import 'package:pet_shop_app/feature/favorite/bloc/favorite_cubit.dart';
-import 'package:pet_shop_app/feature/pet/bloc/pet_cubit.dart';
+import 'package:pet_shop_app/feature/pet_detail/bloc/pet_cubit.dart';
 import 'package:pet_shop_app/feature/user/bloc/user_cubit.dart';
 
 final GetIt sl = GetIt.instance;

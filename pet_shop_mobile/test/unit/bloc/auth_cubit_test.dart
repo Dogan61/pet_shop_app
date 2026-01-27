@@ -56,10 +56,7 @@ void main() {
         fullName: 'Test User',
       );
 
-      const authData = AuthDataModel(
-        user: user,
-        token: 'test_token',
-      );
+      const authData = AuthDataModel(user: user, token: 'test_token');
 
       blocTest<AuthCubit, AuthState>(
         'emits [AuthLoading, AuthAuthenticated] when login succeeds',
@@ -114,9 +111,9 @@ void main() {
           authCubit = AuthCubit(repository: mockRepository);
         },
         build: () {
-          when(() => mockRepository.login(loginRequest)).thenThrow(
-            Exception('Network error'),
-          );
+          when(
+            () => mockRepository.login(loginRequest),
+          ).thenThrow(Exception('Network error'));
           return authCubit;
         },
         act: (cubit) => cubit.login(loginRequest),
@@ -142,10 +139,7 @@ void main() {
         fullName: 'Test User',
       );
 
-      const authData = AuthDataModel(
-        user: user,
-        token: 'test_token',
-      );
+      const authData = AuthDataModel(user: user, token: 'test_token');
 
       blocTest<AuthCubit, AuthState>(
         'emits [AuthRegistered] when registration succeeds',
@@ -165,9 +159,7 @@ void main() {
         act: (cubit) => cubit.register(registerRequest),
         wait: const Duration(milliseconds: 300),
         skip: 1, // Skip initial state from _checkAuthStatus
-        expect: () => [
-          const AuthRegistered(user: user, token: 'test_token'),
-        ],
+        expect: () => [const AuthRegistered(user: user, token: 'test_token')],
       );
 
       blocTest<AuthCubit, AuthState>(
@@ -187,9 +179,7 @@ void main() {
         act: (cubit) => cubit.register(registerRequest),
         wait: const Duration(milliseconds: 300),
         skip: 1, // Skip initial state from _checkAuthStatus
-        expect: () => [
-          const AuthError(message: 'Email already exists'),
-        ],
+        expect: () => [const AuthError(message: 'Email already exists')],
       );
     });
 
@@ -210,11 +200,8 @@ void main() {
         act: (cubit) => cubit.logout(),
         wait: const Duration(milliseconds: 300),
         skip: 1, // Skip initial state from _checkAuthStatus
-        expect: () => [
-          const AuthUnauthenticated(),
-        ],
+        expect: () => [const AuthUnauthenticated()],
       );
     });
   });
 }
-

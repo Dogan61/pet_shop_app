@@ -7,10 +7,10 @@ import 'package:pet_shop_app/core/constants/profile_constants.dart';
 import 'package:pet_shop_app/core/router/bottom_navigation_items.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_cubit.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_state.dart';
-import 'package:pet_shop_app/feature/profile/controllers/profile_controller.dart';
 import 'package:pet_shop_app/feature/profile/mixins/profile_mixin.dart';
 import 'package:pet_shop_app/l10n/app_localizations.dart';
 
+//Todo Refactor profile view
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
 
@@ -19,29 +19,6 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> with ProfileMixin {
-  late final ProfileController _controller;
-  int _currentIndex = 2;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = ProfileController();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void Function(int) _onBottomNavTap(BuildContext context) {
-    return BottomNavigationItems.createRouteHandler(
-      context,
-      setState,
-      (index) => _currentIndex = index,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -122,13 +99,13 @@ class _ProfileViewState extends State<ProfileView> with ProfileMixin {
                     _buildSectionHeader(l10n.appSettings),
                     SizedBox(height: AppDimensionsSpacing.small(context)),
                     ListenableBuilder(
-                      listenable: _controller,
+                      listenable: profileController,
                       builder: (context, _) {
                         return _buildSettingToggle(
                           context,
                           Icons.notifications_none,
                           l10n.notifications,
-                          _controller.notificationsEnabled,
+                          profileController.notificationsEnabled,
                         );
                       },
                     ),
@@ -169,8 +146,8 @@ class _ProfileViewState extends State<ProfileView> with ProfileMixin {
               ),
               bottomNavigationBar: BottomNavigationBar(
                 type: BottomNavigationBarType.fixed,
-                currentIndex: _currentIndex,
-                onTap: _onBottomNavTap(context),
+                currentIndex: currentIndex,
+                onTap: createBottomNavTapHandler(context),
                 selectedItemColor: HomeConstants.primaryColor,
                 unselectedItemColor: HomeConstants.grey,
                 items: BottomNavigationItems.getItems(),
@@ -441,9 +418,7 @@ class _ProfileViewState extends State<ProfileView> with ProfileMixin {
           ),
           Switch(
             value: value,
-            onChanged: (v) {
-              _controller.toggleNotifications(v);
-            },
+            onChanged: profileController.toggleNotifications,
             activeThumbColor: PetDetailConstants.successColor,
             activeTrackColor: PetDetailConstants.successColor.withOpacity(0.3),
           ),

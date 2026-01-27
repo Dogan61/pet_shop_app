@@ -7,12 +7,12 @@ import 'package:pet_shop_app/core/di/injection_container.dart' as di;
 import 'package:pet_shop_app/feature/admin/dashboard/mixins/admin_dashboard_mixin.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_cubit.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_state.dart';
-import 'package:pet_shop_app/feature/pet/bloc/pet_cubit.dart';
-import 'package:pet_shop_app/feature/pet/bloc/pet_state.dart';
+import 'package:pet_shop_app/feature/pet_detail/bloc/pet_cubit.dart';
+import 'package:pet_shop_app/feature/pet_detail/bloc/pet_state.dart';
 
 class AdminDashboardView extends StatefulWidget {
   const AdminDashboardView({super.key});
-
+  //Todo : Refactor admin dashboard view
   @override
   State<AdminDashboardView> createState() => _AdminDashboardViewState();
 }
@@ -142,44 +142,56 @@ class _AdminDashboardViewState extends State<AdminDashboardView>
                     AppDimensionsSpacing.verticalLarge(context),
 
                     // Statistics Card
-                    Card(
-                      child: Padding(
-                        padding: AppDimensionsPadding.allLarge(context),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              AdminConstants.statisticsTitle,
-                              style: Theme.of(context).textTheme.titleLarge
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            AppDimensionsSpacing.verticalMedium(context),
-                            _StatItem(
-                              label: AdminConstants.totalPetsLabel,
-                              value: totalPets.toString(),
-                              icon: AdminConstants.petsIcon,
-                            ),
-                            AppDimensionsSpacing.verticalSmall(context),
-                            const _StatItem(
-                              label: AdminConstants.totalUsersLabel,
-                              value: '0', // TODO: Get from user service
-                              icon: AdminConstants.usersIcon,
-                            ),
-                            AppDimensionsSpacing.verticalSmall(context),
-                            const _StatItem(
-                              label: AdminConstants.totalFavoritesLabel,
-                              value: '0', // TODO: Get from favorite service
-                              icon: AdminConstants.favoritesIcon,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    StatisticsCard(totalPets: totalPets),
                   ],
                 ),
               );
             },
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class StatisticsCard extends StatelessWidget {
+  const StatisticsCard({required this.totalPets, super.key});
+
+  final int totalPets;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: AppDimensionsPadding.allLarge(context),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              AdminConstants.statisticsTitle,
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            AppDimensionsSpacing.verticalMedium(context),
+            _StatItem(
+              label: AdminConstants.totalPetsLabel,
+              value: totalPets.toString(),
+              icon: AdminConstants.petsIcon,
+            ),
+            AppDimensionsSpacing.verticalSmall(context),
+            const _StatItem(
+              label: AdminConstants.totalUsersLabel,
+              value: '0', // TODO: Get from user service
+              icon: AdminConstants.usersIcon,
+            ),
+            AppDimensionsSpacing.verticalSmall(context),
+            const _StatItem(
+              label: AdminConstants.totalFavoritesLabel,
+              value: '0', // TODO: Get from favorite service
+              icon: AdminConstants.favoritesIcon,
+            ),
+          ],
         ),
       ),
     );

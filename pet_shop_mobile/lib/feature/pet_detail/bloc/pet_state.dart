@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:pet_shop_app/feature/pet/models/pet_model.dart';
+import 'package:pet_shop_app/feature/pet_detail/models/pet_model.dart';
 
 abstract class PetState extends Equatable {
   const PetState();

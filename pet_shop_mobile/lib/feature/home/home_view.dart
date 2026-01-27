@@ -16,9 +16,10 @@ import 'package:pet_shop_app/feature/auth/views/login_view.dart';
 import 'package:pet_shop_app/feature/favorite/bloc/favorite_cubit.dart';
 import 'package:pet_shop_app/feature/favorite/bloc/favorite_state.dart';
 import 'package:pet_shop_app/feature/home/controllers/home_controller.dart';
-import 'package:pet_shop_app/feature/pet/bloc/pet_cubit.dart';
-import 'package:pet_shop_app/feature/pet/bloc/pet_state.dart';
-import 'package:pet_shop_app/feature/pet/models/pet_model.dart';
+import 'package:pet_shop_app/feature/home/mixins/home_mixin.dart';
+import 'package:pet_shop_app/feature/pet_detail/bloc/pet_cubit.dart';
+import 'package:pet_shop_app/feature/pet_detail/bloc/pet_state.dart';
+import 'package:pet_shop_app/feature/pet_detail/models/pet_model.dart';
 import 'package:pet_shop_app/l10n/app_localizations.dart';
 
 class HomeView extends StatefulWidget {
@@ -28,30 +29,7 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
-  late final HomeController _controller;
-  int _currentIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = HomeController();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void Function(int) _onBottomNavTap(BuildContext context) {
-    return BottomNavigationItems.createRouteHandler(
-      context,
-      setState,
-      (index) => _currentIndex = index,
-    );
-  }
-
+class _HomeViewState extends State<HomeView> with HomeMixin {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -67,16 +45,8 @@ class _HomeViewState extends State<HomeView> {
       ],
       child: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, authState) {
-          // Load favorites once when authenticated
-          if (authState is AuthAuthenticated &&
-              !_controller.hasLoadedFavorites) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted) {
-                context.read<FavoriteCubit>().getFavorites(authState.token);
-                _controller.markFavoritesLoaded();
-              }
-            });
-          }
+          // Load favorites once when authenticated via mixin
+          loadFavoritesOnceIfAuthenticated(context, authState);
 
           return Scaffold(
             appBar: const EmptyAppBar(),
@@ -156,10 +126,10 @@ class _HomeViewState extends State<HomeView> {
                     ),
                     Expanded(
                       child: ListenableBuilder(
-                        listenable: _controller,
+                        listenable: homeController,
                         builder: (context, _) {
                           return HomeCustomGrid(
-                            selectedCategory: _controller.selectedCategory,
+                            selectedCategory: selectedCategory,
                             token: authState is AuthAuthenticated
                                 ? authState.token
                                 : null,
@@ -173,8 +143,8 @@ class _HomeViewState extends State<HomeView> {
             ),
             bottomNavigationBar: BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
-              currentIndex: _currentIndex,
-              onTap: _onBottomNavTap(context),
+              currentIndex: currentIndex,
+              onTap: createBottomNavTapHandler(context),
               selectedItemColor: HomeConstants.primaryColor,
               unselectedItemColor: HomeConstants.grey,
               items: BottomNavigationItems.getItems(),
@@ -191,7 +161,7 @@ class _HomeViewState extends State<HomeView> {
       return const SizedBox.shrink();
     }
     return ListenableBuilder(
-      listenable: _controller,
+      listenable: homeController,
       builder: (context, _) {
         return SizedBox(
           height: AppDimensionsSize.filterSectionHeight(context),
@@ -202,43 +172,43 @@ class _HomeViewState extends State<HomeView> {
               _CategoryFilterButton(
                 label: l10n.all,
                 category: PetCategory.all,
-                isSelected: _controller.selectedCategory == PetCategory.all,
-                onTap: () => _controller.setCategory(PetCategory.all),
+                isSelected: selectedCategory == PetCategory.all,
+                onTap: () => setCategory(PetCategory.all),
               ),
               AppDimensionsSpacing.horizontalSmall(context),
               _CategoryFilterButton(
                 label: l10n.dogs,
                 category: PetCategory.dogs,
-                isSelected: _controller.selectedCategory == PetCategory.dogs,
-                onTap: () => _controller.setCategory(PetCategory.dogs),
+                isSelected: selectedCategory == PetCategory.dogs,
+                onTap: () => setCategory(PetCategory.dogs),
               ),
               AppDimensionsSpacing.horizontalSmall(context),
               _CategoryFilterButton(
                 label: l10n.cats,
                 category: PetCategory.cats,
-                isSelected: _controller.selectedCategory == PetCategory.cats,
-                onTap: () => _controller.setCategory(PetCategory.cats),
+                isSelected: selectedCategory == PetCategory.cats,
+                onTap: () => setCategory(PetCategory.cats),
               ),
               AppDimensionsSpacing.horizontalSmall(context),
               _CategoryFilterButton(
                 label: l10n.birds,
                 category: PetCategory.birds,
-                isSelected: _controller.selectedCategory == PetCategory.birds,
-                onTap: () => _controller.setCategory(PetCategory.birds),
+                isSelected: selectedCategory == PetCategory.birds,
+                onTap: () => setCategory(PetCategory.birds),
               ),
               AppDimensionsSpacing.horizontalSmall(context),
               _CategoryFilterButton(
                 label: l10n.rabbits,
                 category: PetCategory.rabbits,
-                isSelected: _controller.selectedCategory == PetCategory.rabbits,
-                onTap: () => _controller.setCategory(PetCategory.rabbits),
+                isSelected: selectedCategory == PetCategory.rabbits,
+                onTap: () => setCategory(PetCategory.rabbits),
               ),
               AppDimensionsSpacing.horizontalSmall(context),
               _CategoryFilterButton(
                 label: l10n.fish,
                 category: PetCategory.fish,
-                isSelected: _controller.selectedCategory == PetCategory.fish,
-                onTap: () => _controller.setCategory(PetCategory.fish),
+                isSelected: selectedCategory == PetCategory.fish,
+                onTap: () => setCategory(PetCategory.fish),
               ),
             ],
           ),

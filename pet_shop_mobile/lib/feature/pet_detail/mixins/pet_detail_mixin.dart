@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_cubit.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_state.dart';
 import 'package:pet_shop_app/feature/favorite/bloc/favorite_cubit.dart';
-import 'package:pet_shop_app/feature/pet/bloc/pet_cubit.dart';
-import 'package:pet_shop_app/feature/pet/views/pet_detail_view.dart';
+import 'package:pet_shop_app/feature/pet_detail/bloc/pet_cubit.dart';
+import 'package:pet_shop_app/feature/pet_detail/views/pet_detail_view.dart';
 
 /// Mixin that contains data loading and favorites logic for the Pet Detail page.
 mixin PetDetailMixin on State<PetDetailView> {
@@ -43,4 +43,3 @@ mixin PetDetailMixin on State<PetDetailView> {
     });
   }
 }
-
