@@ -4,9 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:pet_shop_app/core/constants/login_constants.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_cubit.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_state.dart';
+import 'package:pet_shop_app/feature/profile/profile_view.dart';
 
 /// Mixin for Profile page logic
-mixin ProfileMixin<T extends StatefulWidget> on State<T> {
+mixin ProfileMixin on State<ProfileView> {
   /// Handle auth state changes
   void handleAuthState(BuildContext context, AuthState state) {
     if (state is AuthUnauthenticated) {
