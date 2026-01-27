@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:pet_shop_app/core/constants/api_constants.dart';
 import 'package:pet_shop_app/core/data/helpers/api_helper.dart';
 import 'package:pet_shop_app/core/models/api_response_model.dart';
-import 'package:pet_shop_app/feature/pet/models/pet_model.dart';
+import 'package:pet_shop_app/feature/pet_detail/models/pet_model.dart';
 
 /// Abstract data source interface for pet-related API operations
 abstract class PetDataSource {

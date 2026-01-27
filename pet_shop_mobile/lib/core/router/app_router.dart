@@ -6,7 +6,7 @@ import 'package:pet_shop_app/feature/auth/views/login_view.dart';
 import 'package:pet_shop_app/feature/auth/views/register_view.dart';
 import 'package:pet_shop_app/feature/favorite/views/favorites_view.dart';
 import 'package:pet_shop_app/feature/home/home_view.dart';
-import 'package:pet_shop_app/feature/pet/views/pet_detail_view.dart';
+import 'package:pet_shop_app/feature/pet_detail/views/pet_detail_view.dart';
 import 'package:pet_shop_app/feature/profile/profile_view.dart';
 
 /// Application router configuration

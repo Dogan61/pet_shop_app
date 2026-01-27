@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:pet_shop_app/core/constants/admin_constants.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_cubit.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_state.dart';
-import 'package:pet_shop_app/feature/pet/bloc/pet_cubit.dart';
-import 'package:pet_shop_app/feature/pet/bloc/pet_state.dart';
+import 'package:pet_shop_app/feature/pet_detail/bloc/pet_cubit.dart';
+import 'package:pet_shop_app/feature/pet_detail/bloc/pet_state.dart';
 
 /// Mixin for Admin Pets List logic
 mixin AdminPetsListMixin<T extends StatefulWidget> on State<T> {
@@ -40,8 +40,8 @@ mixin AdminPetsListMixin<T extends StatefulWidget> on State<T> {
   void handlePetState(BuildContext context, PetState state) {
     if (state is PetDeleted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text(AdminConstants.petDeletedSuccess),
+        const SnackBar(
+          content: Text(AdminConstants.petDeletedSuccess),
           backgroundColor: AdminConstants.addPetColor,
         ),
       );

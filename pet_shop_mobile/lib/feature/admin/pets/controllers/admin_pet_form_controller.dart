@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pet_shop_app/core/constants/admin_constants.dart';
 import 'package:pet_shop_app/core/models/pet_category.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_state.dart';
-import 'package:pet_shop_app/feature/pet/bloc/pet_state.dart';
-import 'package:pet_shop_app/feature/pet/models/pet_model.dart';
+import 'package:pet_shop_app/feature/pet_detail/bloc/pet_state.dart';
+import 'package:pet_shop_app/feature/pet_detail/models/pet_model.dart';
 
 /// Controller for Admin Pet Form
 /// Manages form state, validation, and business logic

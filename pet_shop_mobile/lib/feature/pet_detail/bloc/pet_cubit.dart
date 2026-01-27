@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_shop_app/core/data/repositories/pet_repository.dart';
-import 'package:pet_shop_app/feature/pet/bloc/pet_state.dart';
-import 'package:pet_shop_app/feature/pet/models/pet_model.dart';
+import 'package:pet_shop_app/feature/pet_detail/bloc/pet_state.dart';
+import 'package:pet_shop_app/feature/pet_detail/models/pet_model.dart';
 
 class PetCubit extends Cubit<PetState> {
   PetCubit({required this.repository}) : super(const PetInitial());

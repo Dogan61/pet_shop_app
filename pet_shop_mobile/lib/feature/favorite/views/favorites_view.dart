@@ -11,9 +11,8 @@ import 'package:pet_shop_app/feature/auth/bloc/auth_cubit.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_state.dart';
 import 'package:pet_shop_app/feature/favorite/bloc/favorite_cubit.dart';
 import 'package:pet_shop_app/feature/favorite/bloc/favorite_state.dart';
-import 'package:pet_shop_app/feature/favorite/controllers/favorites_controller.dart';
-import 'package:pet_shop_app/feature/favorite/models/favorite_model.dart';
 import 'package:pet_shop_app/feature/favorite/mixins/favorites_mixin.dart';
+import 'package:pet_shop_app/feature/favorite/models/favorite_model.dart';
 import 'package:pet_shop_app/feature/favorite/widgets/favorites_card.dart';
 import 'package:pet_shop_app/l10n/app_localizations.dart';
 
@@ -25,29 +24,6 @@ class FavoritesView extends StatefulWidget {
 }
 
 class _FavoritesViewState extends State<FavoritesView> with FavoritesMixin {
-  late final FavoritesController _controller;
-  int _currentIndex = 1; // Favorites index
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = FavoritesController();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void Function(int) _onBottomNavTap(BuildContext context) {
-    return BottomNavigationItems.createRouteHandler(
-      context,
-      setState,
-      (index) => _currentIndex = index,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -61,17 +37,11 @@ class _FavoritesViewState extends State<FavoritesView> with FavoritesMixin {
       create: (context) => di.sl<FavoriteCubit>(),
       child: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, authState) {
-          // Kimlik doğrulama ve token bilgisini mixin üzerinden yönet
           final isAuthenticated = isUserAuthenticated(authState);
           final token = extractToken(authState);
 
-          // Kimlik doğrulanmışsa favorileri sadece bir kez yükle
           if (isAuthenticated && token != null) {
-            loadFavoritesOnce(
-              context: context,
-              controller: _controller,
-              token: token,
-            );
+            loadFavoritesOnce(context: context, token: token);
           }
 
           if (!isAuthenticated || token == null) {
@@ -86,7 +56,6 @@ class _FavoritesViewState extends State<FavoritesView> with FavoritesMixin {
             body: BlocConsumer<FavoriteCubit, FavoriteState>(
               listener: (context, state) {
                 if (state is FavoriteError) {
-                  // Hata durumunu mixin üzerinden yönet
                   handleFavoriteError(context, state);
                 }
               },
@@ -129,8 +98,8 @@ class _FavoritesViewState extends State<FavoritesView> with FavoritesMixin {
             ),
             bottomNavigationBar: BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
-              currentIndex: _currentIndex,
-              onTap: _onBottomNavTap(context),
+              currentIndex: currentIndex,
+              onTap: createBottomNavTapHandler(context),
               selectedItemColor: HomeConstants.primaryColor,
               unselectedItemColor: HomeConstants.grey,
               items: BottomNavigationItems.getItems(),

@@ -4,14 +4,14 @@ import 'package:go_router/go_router.dart';
 import 'package:pet_shop_app/core/constants/app_dimensions.dart';
 import 'package:pet_shop_app/core/constants/login_constants.dart';
 import 'package:pet_shop_app/core/constants/ui_constants.dart';
-import 'package:pet_shop_app/feature/auth/controller/register_controller.dart';
 import 'package:pet_shop_app/core/di/injection_container.dart' as di;
-import 'package:pet_shop_app/feature/auth/validation/register_validator.dart';
 import 'package:pet_shop_app/core/widgets/app_bars.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_cubit.dart';
 import 'package:pet_shop_app/feature/auth/bloc/auth_state.dart';
+import 'package:pet_shop_app/feature/auth/controller/register_controller.dart';
 import 'package:pet_shop_app/feature/auth/mixins/login_mixin.dart';
 import 'package:pet_shop_app/feature/auth/models/auth_model.dart';
+import 'package:pet_shop_app/feature/auth/validation/register_validator.dart';
 import 'package:pet_shop_app/l10n/app_localizations.dart';
 
 class RegisterView extends StatefulWidget {
